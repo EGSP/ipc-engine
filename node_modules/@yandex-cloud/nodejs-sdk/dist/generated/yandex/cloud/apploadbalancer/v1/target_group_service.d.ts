@@ -1,0 +1,958 @@
+/// <reference types="node" />
+import { ChannelCredentials, ChannelOptions, UntypedServiceImplementation, handleUnaryCall, Client, ClientUnaryCall, Metadata, CallOptions, ServiceError } from "@grpc/grpc-js";
+import _m0 from "protobufjs/minimal";
+import { FieldMask } from "../../../../google/protobuf/field_mask";
+import { TargetGroup, Target } from "../../../../yandex/cloud/apploadbalancer/v1/target_group";
+import { Operation } from "../../../../yandex/cloud/operation/operation";
+export declare const protobufPackage = "yandex.cloud.apploadbalancer.v1";
+export interface GetTargetGroupRequest {
+    $type: "yandex.cloud.apploadbalancer.v1.GetTargetGroupRequest";
+    /**
+     * ID of the target group to return.
+     *
+     * To get the target group ID, make a [TargetGroupService.List] request.
+     */
+    targetGroupId: string;
+}
+export interface ListTargetGroupsRequest {
+    $type: "yandex.cloud.apploadbalancer.v1.ListTargetGroupsRequest";
+    /**
+     * ID of the folder to list target groups in.
+     *
+     * To get the folder ID, make a [yandex.cloud.resourcemanager.v1.FolderService.List] request.
+     */
+    folderId: string;
+    /**
+     * The maximum number of results per page to return. If the number of available
+     * results is larger than `page_size`, the service returns a [ListTargetGroupsResponse.next_page_token]
+     * that can be used to get the next page of results in subsequent list requests.
+     * Default value: 100.
+     */
+    pageSize: number;
+    /**
+     * Page token. To get the next page of results, set `page_token` to the
+     * [ListTargetGroupsResponse.next_page_token] returned by a previous list request.
+     */
+    pageToken: string;
+    /**
+     * A filter expression that filters target groups listed in the response.
+     *
+     * The expression must specify:
+     * 1. The field name. Currently you can use filtering only on [TargetGroup.name] field.
+     * 2. An `=` operator.
+     * 3. The value in double quotes (`"`). Must be 3-63 characters long and match the regular expression `[a-z][-a-z0-9]{1,61}[a-z0-9]`.
+     * Example of a filter: `name=my-target-group`.
+     */
+    filter: string;
+}
+export interface ListTargetGroupsResponse {
+    $type: "yandex.cloud.apploadbalancer.v1.ListTargetGroupsResponse";
+    /** List of target groups in the specified folder. */
+    targetGroups: TargetGroup[];
+    /**
+     * Token for getting the next page of the list. If the number of results is greater than
+     * the specified [ListTargetGroupsRequest.page_size], use `next_page_token` as the value
+     * for the [ListTargetGroupsRequest.page_token] parameter in the next list request.
+     *
+     * Each subsequent page will have its own `next_page_token` to continue paging through the results.
+     */
+    nextPageToken: string;
+}
+export interface DeleteTargetGroupRequest {
+    $type: "yandex.cloud.apploadbalancer.v1.DeleteTargetGroupRequest";
+    /**
+     * ID of the target group to delete.
+     *
+     * To get the target group ID, make a [TargetGroupService.List] request.
+     */
+    targetGroupId: string;
+}
+export interface DeleteTargetGroupMetadata {
+    $type: "yandex.cloud.apploadbalancer.v1.DeleteTargetGroupMetadata";
+    /** ID of the target group that is being deleted. */
+    targetGroupId: string;
+}
+export interface UpdateTargetGroupRequest {
+    $type: "yandex.cloud.apploadbalancer.v1.UpdateTargetGroupRequest";
+    /**
+     * ID of the target group to update.
+     *
+     * To get the target group ID, make a [TargetGroupService.List] request.
+     */
+    targetGroupId: string;
+    /** Field mask that specifies which attributes of the target group should be updated. */
+    updateMask?: FieldMask;
+    /**
+     * New name for the target group.
+     * The name must be unique within the folder.
+     */
+    name: string;
+    /** New description of the target group. */
+    description: string;
+    /**
+     * Target group labels as `key:value` pairs.
+     * For details about the concept, see [documentation](/docs/overview/concepts/services#labels).
+     *
+     * Existing set of labels is completely replaced by the provided set, so if you just want
+     * to add or remove a label:
+     * 1. Get the current set of labels with a [TargetGroupService.Get] request.
+     * 2. Add or remove a label in this set.
+     * 3. Send the new set in this field.
+     */
+    labels: {
+        [key: string]: string;
+    };
+    /**
+     * New list of targets in the target group.
+     *
+     * Existing list of targets is completely replaced by the specified list, so if you just want to add or remove
+     * a target, make a [TargetGroupService.AddTargets] request or a [TargetGroupService.RemoveTargets] request.
+     */
+    targets: Target[];
+}
+export interface UpdateTargetGroupRequest_LabelsEntry {
+    $type: "yandex.cloud.apploadbalancer.v1.UpdateTargetGroupRequest.LabelsEntry";
+    key: string;
+    value: string;
+}
+export interface UpdateTargetGroupMetadata {
+    $type: "yandex.cloud.apploadbalancer.v1.UpdateTargetGroupMetadata";
+    /** ID of the target group that is being updated. */
+    targetGroupId: string;
+}
+export interface CreateTargetGroupRequest {
+    $type: "yandex.cloud.apploadbalancer.v1.CreateTargetGroupRequest";
+    /**
+     * ID of the folder to create a target group in.
+     *
+     * To get the folder ID, make a [yandex.cloud.resourcemanager.v1.FolderService.List] request.
+     */
+    folderId: string;
+    /**
+     * Name of the target group.
+     * The name must be unique within the folder.
+     */
+    name: string;
+    /** Description of the target group. */
+    description: string;
+    /**
+     * Target group labels as `key:value` pairs.
+     * For details about the concept, see [documentation](/docs/overview/concepts/services#labels).
+     */
+    labels: {
+        [key: string]: string;
+    };
+    /** List of targets in the target group. */
+    targets: Target[];
+}
+export interface CreateTargetGroupRequest_LabelsEntry {
+    $type: "yandex.cloud.apploadbalancer.v1.CreateTargetGroupRequest.LabelsEntry";
+    key: string;
+    value: string;
+}
+export interface CreateTargetGroupMetadata {
+    $type: "yandex.cloud.apploadbalancer.v1.CreateTargetGroupMetadata";
+    /** ID of the target group that is being created. */
+    targetGroupId: string;
+}
+export interface AddTargetsRequest {
+    $type: "yandex.cloud.apploadbalancer.v1.AddTargetsRequest";
+    /**
+     * ID of the target group to add targets to.
+     *
+     * To get the target group ID, make a [TargetGroupService.List] request.
+     */
+    targetGroupId: string;
+    /** List of targets to add to the target group. */
+    targets: Target[];
+}
+export interface AddTargetsMetadata {
+    $type: "yandex.cloud.apploadbalancer.v1.AddTargetsMetadata";
+    /** ID of the target group that the targets are being added to. */
+    targetGroupId: string;
+}
+export interface RemoveTargetsRequest {
+    $type: "yandex.cloud.apploadbalancer.v1.RemoveTargetsRequest";
+    /**
+     * ID of the target group to remove targets from.
+     *
+     * To get the target group ID, make a [TargetGroupService.List] request.
+     */
+    targetGroupId: string;
+    /** List of targets to remove from the target group. */
+    targets: Target[];
+}
+export interface RemoveTargetsMetadata {
+    $type: "yandex.cloud.apploadbalancer.v1.RemoveTargetsMetadata";
+    /** ID of the target group that the targets are being removed from. */
+    targetGroupId: string;
+}
+export interface ListTargetGroupOperationsRequest {
+    $type: "yandex.cloud.apploadbalancer.v1.ListTargetGroupOperationsRequest";
+    /**
+     * ID of the target group to get operations for.
+     *
+     * To get the target group ID, use a [TargetGroupService.List] request.
+     */
+    targetGroupId: string;
+    /**
+     * The maximum number of results per page that should be returned. If the number of available
+     * results is larger than [page_size], the service returns a [ListTargetGroupOperationsResponse.next_page_token]
+     * that can be used to get the next page of results in subsequent list requests.
+     * Default value: 100.
+     */
+    pageSize: number;
+    /**
+     * Page token. To get the next page of results, set [page_token] to the
+     * [ListTargetGroupOperationsResponse.next_page_token] returned by a previous list request.
+     */
+    pageToken: string;
+}
+export interface ListTargetGroupOperationsResponse {
+    $type: "yandex.cloud.apploadbalancer.v1.ListTargetGroupOperationsResponse";
+    /** List of operations for the specified target group. */
+    operations: Operation[];
+    /**
+     * Token for getting the next page of the list. If the number of results is greater than
+     * the specified [ListTargetGroupOperationsRequest.page_size], use `next_page_token` as the value
+     * for the [ListTargetGroupOperationsRequest.page_token] parameter in the next list request.
+     *
+     * Each subsequent page will have its own `next_page_token` to continue paging through the results.
+     */
+    nextPageToken: string;
+}
+export declare const GetTargetGroupRequest: {
+    $type: "yandex.cloud.apploadbalancer.v1.GetTargetGroupRequest";
+    encode(message: GetTargetGroupRequest, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): GetTargetGroupRequest;
+    fromJSON(object: any): GetTargetGroupRequest;
+    toJSON(message: GetTargetGroupRequest): unknown;
+    fromPartial<I extends {
+        targetGroupId?: string | undefined;
+    } & {
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "targetGroupId">, never>>(object: I): GetTargetGroupRequest;
+};
+export declare const ListTargetGroupsRequest: {
+    $type: "yandex.cloud.apploadbalancer.v1.ListTargetGroupsRequest";
+    encode(message: ListTargetGroupsRequest, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): ListTargetGroupsRequest;
+    fromJSON(object: any): ListTargetGroupsRequest;
+    toJSON(message: ListTargetGroupsRequest): unknown;
+    fromPartial<I extends {
+        pageSize?: number | undefined;
+        pageToken?: string | undefined;
+        filter?: string | undefined;
+        folderId?: string | undefined;
+    } & {
+        pageSize?: number | undefined;
+        pageToken?: string | undefined;
+        filter?: string | undefined;
+        folderId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "pageSize" | "pageToken" | "filter" | "folderId">, never>>(object: I): ListTargetGroupsRequest;
+};
+export declare const ListTargetGroupsResponse: {
+    $type: "yandex.cloud.apploadbalancer.v1.ListTargetGroupsResponse";
+    encode(message: ListTargetGroupsResponse, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): ListTargetGroupsResponse;
+    fromJSON(object: any): ListTargetGroupsResponse;
+    toJSON(message: ListTargetGroupsResponse): unknown;
+    fromPartial<I extends {
+        nextPageToken?: string | undefined;
+        targetGroups?: {
+            description?: string | undefined;
+            id?: string | undefined;
+            name?: string | undefined;
+            createdAt?: Date | undefined;
+            folderId?: string | undefined;
+            labels?: {
+                [x: string]: string | undefined;
+                [x: number]: string | undefined;
+            } | undefined;
+            targets?: {
+                ipAddress?: string | undefined;
+                subnetId?: string | undefined;
+                privateIpv4Address?: boolean | undefined;
+            }[] | undefined;
+        }[] | undefined;
+    } & {
+        nextPageToken?: string | undefined;
+        targetGroups?: ({
+            description?: string | undefined;
+            id?: string | undefined;
+            name?: string | undefined;
+            createdAt?: Date | undefined;
+            folderId?: string | undefined;
+            labels?: {
+                [x: string]: string | undefined;
+                [x: number]: string | undefined;
+            } | undefined;
+            targets?: {
+                ipAddress?: string | undefined;
+                subnetId?: string | undefined;
+                privateIpv4Address?: boolean | undefined;
+            }[] | undefined;
+        }[] & ({
+            description?: string | undefined;
+            id?: string | undefined;
+            name?: string | undefined;
+            createdAt?: Date | undefined;
+            folderId?: string | undefined;
+            labels?: {
+                [x: string]: string | undefined;
+                [x: number]: string | undefined;
+            } | undefined;
+            targets?: {
+                ipAddress?: string | undefined;
+                subnetId?: string | undefined;
+                privateIpv4Address?: boolean | undefined;
+            }[] | undefined;
+        } & {
+            description?: string | undefined;
+            id?: string | undefined;
+            name?: string | undefined;
+            createdAt?: Date | undefined;
+            folderId?: string | undefined;
+            labels?: ({
+                [x: string]: string | undefined;
+                [x: number]: string | undefined;
+            } & {
+                [x: string]: string | undefined;
+                [x: number]: string | undefined;
+            } & Record<Exclude<keyof I["targetGroups"][number]["labels"], string | number>, never>) | undefined;
+            targets?: ({
+                ipAddress?: string | undefined;
+                subnetId?: string | undefined;
+                privateIpv4Address?: boolean | undefined;
+            }[] & ({
+                ipAddress?: string | undefined;
+                subnetId?: string | undefined;
+                privateIpv4Address?: boolean | undefined;
+            } & {
+                ipAddress?: string | undefined;
+                subnetId?: string | undefined;
+                privateIpv4Address?: boolean | undefined;
+            } & Record<Exclude<keyof I["targetGroups"][number]["targets"][number], "$type" | "ipAddress" | "subnetId" | "privateIpv4Address">, never>)[] & Record<Exclude<keyof I["targetGroups"][number]["targets"], "$type" | keyof {
+                ipAddress?: string | undefined;
+                subnetId?: string | undefined;
+                privateIpv4Address?: boolean | undefined;
+            }[]>, never>) | undefined;
+        } & Record<Exclude<keyof I["targetGroups"][number], "$type" | "description" | "id" | "name" | "createdAt" | "folderId" | "labels" | "targets">, never>)[] & Record<Exclude<keyof I["targetGroups"], "$type" | keyof {
+            description?: string | undefined;
+            id?: string | undefined;
+            name?: string | undefined;
+            createdAt?: Date | undefined;
+            folderId?: string | undefined;
+            labels?: {
+                [x: string]: string | undefined;
+                [x: number]: string | undefined;
+            } | undefined;
+            targets?: {
+                ipAddress?: string | undefined;
+                subnetId?: string | undefined;
+                privateIpv4Address?: boolean | undefined;
+            }[] | undefined;
+        }[]>, never>) | undefined;
+    } & Record<Exclude<keyof I, "$type" | "nextPageToken" | "targetGroups">, never>>(object: I): ListTargetGroupsResponse;
+};
+export declare const DeleteTargetGroupRequest: {
+    $type: "yandex.cloud.apploadbalancer.v1.DeleteTargetGroupRequest";
+    encode(message: DeleteTargetGroupRequest, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): DeleteTargetGroupRequest;
+    fromJSON(object: any): DeleteTargetGroupRequest;
+    toJSON(message: DeleteTargetGroupRequest): unknown;
+    fromPartial<I extends {
+        targetGroupId?: string | undefined;
+    } & {
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "targetGroupId">, never>>(object: I): DeleteTargetGroupRequest;
+};
+export declare const DeleteTargetGroupMetadata: {
+    $type: "yandex.cloud.apploadbalancer.v1.DeleteTargetGroupMetadata";
+    encode(message: DeleteTargetGroupMetadata, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): DeleteTargetGroupMetadata;
+    fromJSON(object: any): DeleteTargetGroupMetadata;
+    toJSON(message: DeleteTargetGroupMetadata): unknown;
+    fromPartial<I extends {
+        targetGroupId?: string | undefined;
+    } & {
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "targetGroupId">, never>>(object: I): DeleteTargetGroupMetadata;
+};
+export declare const UpdateTargetGroupRequest: {
+    $type: "yandex.cloud.apploadbalancer.v1.UpdateTargetGroupRequest";
+    encode(message: UpdateTargetGroupRequest, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): UpdateTargetGroupRequest;
+    fromJSON(object: any): UpdateTargetGroupRequest;
+    toJSON(message: UpdateTargetGroupRequest): unknown;
+    fromPartial<I extends {
+        description?: string | undefined;
+        name?: string | undefined;
+        labels?: {
+            [x: string]: string | undefined;
+            [x: number]: string | undefined;
+        } | undefined;
+        updateMask?: {
+            paths?: string[] | undefined;
+        } | undefined;
+        targets?: {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[] | undefined;
+        targetGroupId?: string | undefined;
+    } & {
+        description?: string | undefined;
+        name?: string | undefined;
+        labels?: ({
+            [x: string]: string | undefined;
+            [x: number]: string | undefined;
+        } & {
+            [x: string]: string | undefined;
+            [x: number]: string | undefined;
+        } & Record<Exclude<keyof I["labels"], string | number>, never>) | undefined;
+        updateMask?: ({
+            paths?: string[] | undefined;
+        } & {
+            paths?: (string[] & string[] & Record<Exclude<keyof I["updateMask"]["paths"], "$type" | keyof string[]>, never>) | undefined;
+        } & Record<Exclude<keyof I["updateMask"], "$type" | "paths">, never>) | undefined;
+        targets?: ({
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[] & ({
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        } & {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        } & Record<Exclude<keyof I["targets"][number], "$type" | "ipAddress" | "subnetId" | "privateIpv4Address">, never>)[] & Record<Exclude<keyof I["targets"], "$type" | keyof {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[]>, never>) | undefined;
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "description" | "name" | "labels" | "updateMask" | "targets" | "targetGroupId">, never>>(object: I): UpdateTargetGroupRequest;
+};
+export declare const UpdateTargetGroupRequest_LabelsEntry: {
+    $type: "yandex.cloud.apploadbalancer.v1.UpdateTargetGroupRequest.LabelsEntry";
+    encode(message: UpdateTargetGroupRequest_LabelsEntry, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): UpdateTargetGroupRequest_LabelsEntry;
+    fromJSON(object: any): UpdateTargetGroupRequest_LabelsEntry;
+    toJSON(message: UpdateTargetGroupRequest_LabelsEntry): unknown;
+    fromPartial<I extends {
+        value?: string | undefined;
+        key?: string | undefined;
+    } & {
+        value?: string | undefined;
+        key?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "value" | "key">, never>>(object: I): UpdateTargetGroupRequest_LabelsEntry;
+};
+export declare const UpdateTargetGroupMetadata: {
+    $type: "yandex.cloud.apploadbalancer.v1.UpdateTargetGroupMetadata";
+    encode(message: UpdateTargetGroupMetadata, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): UpdateTargetGroupMetadata;
+    fromJSON(object: any): UpdateTargetGroupMetadata;
+    toJSON(message: UpdateTargetGroupMetadata): unknown;
+    fromPartial<I extends {
+        targetGroupId?: string | undefined;
+    } & {
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "targetGroupId">, never>>(object: I): UpdateTargetGroupMetadata;
+};
+export declare const CreateTargetGroupRequest: {
+    $type: "yandex.cloud.apploadbalancer.v1.CreateTargetGroupRequest";
+    encode(message: CreateTargetGroupRequest, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): CreateTargetGroupRequest;
+    fromJSON(object: any): CreateTargetGroupRequest;
+    toJSON(message: CreateTargetGroupRequest): unknown;
+    fromPartial<I extends {
+        description?: string | undefined;
+        name?: string | undefined;
+        folderId?: string | undefined;
+        labels?: {
+            [x: string]: string | undefined;
+            [x: number]: string | undefined;
+        } | undefined;
+        targets?: {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[] | undefined;
+    } & {
+        description?: string | undefined;
+        name?: string | undefined;
+        folderId?: string | undefined;
+        labels?: ({
+            [x: string]: string | undefined;
+            [x: number]: string | undefined;
+        } & {
+            [x: string]: string | undefined;
+            [x: number]: string | undefined;
+        } & Record<Exclude<keyof I["labels"], string | number>, never>) | undefined;
+        targets?: ({
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[] & ({
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        } & {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        } & Record<Exclude<keyof I["targets"][number], "$type" | "ipAddress" | "subnetId" | "privateIpv4Address">, never>)[] & Record<Exclude<keyof I["targets"], "$type" | keyof {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[]>, never>) | undefined;
+    } & Record<Exclude<keyof I, "$type" | "description" | "name" | "folderId" | "labels" | "targets">, never>>(object: I): CreateTargetGroupRequest;
+};
+export declare const CreateTargetGroupRequest_LabelsEntry: {
+    $type: "yandex.cloud.apploadbalancer.v1.CreateTargetGroupRequest.LabelsEntry";
+    encode(message: CreateTargetGroupRequest_LabelsEntry, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): CreateTargetGroupRequest_LabelsEntry;
+    fromJSON(object: any): CreateTargetGroupRequest_LabelsEntry;
+    toJSON(message: CreateTargetGroupRequest_LabelsEntry): unknown;
+    fromPartial<I extends {
+        value?: string | undefined;
+        key?: string | undefined;
+    } & {
+        value?: string | undefined;
+        key?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "value" | "key">, never>>(object: I): CreateTargetGroupRequest_LabelsEntry;
+};
+export declare const CreateTargetGroupMetadata: {
+    $type: "yandex.cloud.apploadbalancer.v1.CreateTargetGroupMetadata";
+    encode(message: CreateTargetGroupMetadata, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): CreateTargetGroupMetadata;
+    fromJSON(object: any): CreateTargetGroupMetadata;
+    toJSON(message: CreateTargetGroupMetadata): unknown;
+    fromPartial<I extends {
+        targetGroupId?: string | undefined;
+    } & {
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "targetGroupId">, never>>(object: I): CreateTargetGroupMetadata;
+};
+export declare const AddTargetsRequest: {
+    $type: "yandex.cloud.apploadbalancer.v1.AddTargetsRequest";
+    encode(message: AddTargetsRequest, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): AddTargetsRequest;
+    fromJSON(object: any): AddTargetsRequest;
+    toJSON(message: AddTargetsRequest): unknown;
+    fromPartial<I extends {
+        targets?: {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[] | undefined;
+        targetGroupId?: string | undefined;
+    } & {
+        targets?: ({
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[] & ({
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        } & {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        } & Record<Exclude<keyof I["targets"][number], "$type" | "ipAddress" | "subnetId" | "privateIpv4Address">, never>)[] & Record<Exclude<keyof I["targets"], "$type" | keyof {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[]>, never>) | undefined;
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "targets" | "targetGroupId">, never>>(object: I): AddTargetsRequest;
+};
+export declare const AddTargetsMetadata: {
+    $type: "yandex.cloud.apploadbalancer.v1.AddTargetsMetadata";
+    encode(message: AddTargetsMetadata, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): AddTargetsMetadata;
+    fromJSON(object: any): AddTargetsMetadata;
+    toJSON(message: AddTargetsMetadata): unknown;
+    fromPartial<I extends {
+        targetGroupId?: string | undefined;
+    } & {
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "targetGroupId">, never>>(object: I): AddTargetsMetadata;
+};
+export declare const RemoveTargetsRequest: {
+    $type: "yandex.cloud.apploadbalancer.v1.RemoveTargetsRequest";
+    encode(message: RemoveTargetsRequest, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): RemoveTargetsRequest;
+    fromJSON(object: any): RemoveTargetsRequest;
+    toJSON(message: RemoveTargetsRequest): unknown;
+    fromPartial<I extends {
+        targets?: {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[] | undefined;
+        targetGroupId?: string | undefined;
+    } & {
+        targets?: ({
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[] & ({
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        } & {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        } & Record<Exclude<keyof I["targets"][number], "$type" | "ipAddress" | "subnetId" | "privateIpv4Address">, never>)[] & Record<Exclude<keyof I["targets"], "$type" | keyof {
+            ipAddress?: string | undefined;
+            subnetId?: string | undefined;
+            privateIpv4Address?: boolean | undefined;
+        }[]>, never>) | undefined;
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "targets" | "targetGroupId">, never>>(object: I): RemoveTargetsRequest;
+};
+export declare const RemoveTargetsMetadata: {
+    $type: "yandex.cloud.apploadbalancer.v1.RemoveTargetsMetadata";
+    encode(message: RemoveTargetsMetadata, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): RemoveTargetsMetadata;
+    fromJSON(object: any): RemoveTargetsMetadata;
+    toJSON(message: RemoveTargetsMetadata): unknown;
+    fromPartial<I extends {
+        targetGroupId?: string | undefined;
+    } & {
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "targetGroupId">, never>>(object: I): RemoveTargetsMetadata;
+};
+export declare const ListTargetGroupOperationsRequest: {
+    $type: "yandex.cloud.apploadbalancer.v1.ListTargetGroupOperationsRequest";
+    encode(message: ListTargetGroupOperationsRequest, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): ListTargetGroupOperationsRequest;
+    fromJSON(object: any): ListTargetGroupOperationsRequest;
+    toJSON(message: ListTargetGroupOperationsRequest): unknown;
+    fromPartial<I extends {
+        pageSize?: number | undefined;
+        pageToken?: string | undefined;
+        targetGroupId?: string | undefined;
+    } & {
+        pageSize?: number | undefined;
+        pageToken?: string | undefined;
+        targetGroupId?: string | undefined;
+    } & Record<Exclude<keyof I, "$type" | "pageSize" | "pageToken" | "targetGroupId">, never>>(object: I): ListTargetGroupOperationsRequest;
+};
+export declare const ListTargetGroupOperationsResponse: {
+    $type: "yandex.cloud.apploadbalancer.v1.ListTargetGroupOperationsResponse";
+    encode(message: ListTargetGroupOperationsResponse, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number | undefined): ListTargetGroupOperationsResponse;
+    fromJSON(object: any): ListTargetGroupOperationsResponse;
+    toJSON(message: ListTargetGroupOperationsResponse): unknown;
+    fromPartial<I extends {
+        nextPageToken?: string | undefined;
+        operations?: {
+            description?: string | undefined;
+            id?: string | undefined;
+            createdBy?: string | undefined;
+            done?: boolean | undefined;
+            createdAt?: Date | undefined;
+            modifiedAt?: Date | undefined;
+            metadata?: {
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } | undefined;
+            error?: {
+                code?: number | undefined;
+                message?: string | undefined;
+                details?: {
+                    typeUrl?: string | undefined;
+                    value?: Buffer | undefined;
+                }[] | undefined;
+            } | undefined;
+            response?: {
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } | undefined;
+        }[] | undefined;
+    } & {
+        nextPageToken?: string | undefined;
+        operations?: ({
+            description?: string | undefined;
+            id?: string | undefined;
+            createdBy?: string | undefined;
+            done?: boolean | undefined;
+            createdAt?: Date | undefined;
+            modifiedAt?: Date | undefined;
+            metadata?: {
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } | undefined;
+            error?: {
+                code?: number | undefined;
+                message?: string | undefined;
+                details?: {
+                    typeUrl?: string | undefined;
+                    value?: Buffer | undefined;
+                }[] | undefined;
+            } | undefined;
+            response?: {
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } | undefined;
+        }[] & ({
+            description?: string | undefined;
+            id?: string | undefined;
+            createdBy?: string | undefined;
+            done?: boolean | undefined;
+            createdAt?: Date | undefined;
+            modifiedAt?: Date | undefined;
+            metadata?: {
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } | undefined;
+            error?: {
+                code?: number | undefined;
+                message?: string | undefined;
+                details?: {
+                    typeUrl?: string | undefined;
+                    value?: Buffer | undefined;
+                }[] | undefined;
+            } | undefined;
+            response?: {
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } | undefined;
+        } & {
+            description?: string | undefined;
+            id?: string | undefined;
+            createdBy?: string | undefined;
+            done?: boolean | undefined;
+            createdAt?: Date | undefined;
+            modifiedAt?: Date | undefined;
+            metadata?: ({
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } & {
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } & Record<Exclude<keyof I["operations"][number]["metadata"], "$type" | "typeUrl" | "value">, never>) | undefined;
+            error?: ({
+                code?: number | undefined;
+                message?: string | undefined;
+                details?: {
+                    typeUrl?: string | undefined;
+                    value?: Buffer | undefined;
+                }[] | undefined;
+            } & {
+                code?: number | undefined;
+                message?: string | undefined;
+                details?: ({
+                    typeUrl?: string | undefined;
+                    value?: Buffer | undefined;
+                }[] & ({
+                    typeUrl?: string | undefined;
+                    value?: Buffer | undefined;
+                } & {
+                    typeUrl?: string | undefined;
+                    value?: Buffer | undefined;
+                } & Record<Exclude<keyof I["operations"][number]["error"]["details"][number], "$type" | "typeUrl" | "value">, never>)[] & Record<Exclude<keyof I["operations"][number]["error"]["details"], "$type" | keyof {
+                    typeUrl?: string | undefined;
+                    value?: Buffer | undefined;
+                }[]>, never>) | undefined;
+            } & Record<Exclude<keyof I["operations"][number]["error"], "$type" | "code" | "message" | "details">, never>) | undefined;
+            response?: ({
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } & {
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } & Record<Exclude<keyof I["operations"][number]["response"], "$type" | "typeUrl" | "value">, never>) | undefined;
+        } & Record<Exclude<keyof I["operations"][number], "$type" | "description" | "id" | "createdBy" | "done" | "createdAt" | "modifiedAt" | "metadata" | "error" | "response">, never>)[] & Record<Exclude<keyof I["operations"], "$type" | keyof {
+            description?: string | undefined;
+            id?: string | undefined;
+            createdBy?: string | undefined;
+            done?: boolean | undefined;
+            createdAt?: Date | undefined;
+            modifiedAt?: Date | undefined;
+            metadata?: {
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } | undefined;
+            error?: {
+                code?: number | undefined;
+                message?: string | undefined;
+                details?: {
+                    typeUrl?: string | undefined;
+                    value?: Buffer | undefined;
+                }[] | undefined;
+            } | undefined;
+            response?: {
+                typeUrl?: string | undefined;
+                value?: Buffer | undefined;
+            } | undefined;
+        }[]>, never>) | undefined;
+    } & Record<Exclude<keyof I, "$type" | "nextPageToken" | "operations">, never>>(object: I): ListTargetGroupOperationsResponse;
+};
+/** A set of methods for managing target groups. */
+export declare const TargetGroupServiceService: {
+    /**
+     * Returns the specified target group.
+     *
+     * To get the list of all available target groups, make a [List] request.
+     */
+    readonly get: {
+        readonly path: "/yandex.cloud.apploadbalancer.v1.TargetGroupService/Get";
+        readonly requestStream: false;
+        readonly responseStream: false;
+        readonly requestSerialize: (value: GetTargetGroupRequest) => Buffer;
+        readonly requestDeserialize: (value: Buffer) => GetTargetGroupRequest;
+        readonly responseSerialize: (value: TargetGroup) => Buffer;
+        readonly responseDeserialize: (value: Buffer) => TargetGroup;
+    };
+    /** Lists target groups in the specified folder. */
+    readonly list: {
+        readonly path: "/yandex.cloud.apploadbalancer.v1.TargetGroupService/List";
+        readonly requestStream: false;
+        readonly responseStream: false;
+        readonly requestSerialize: (value: ListTargetGroupsRequest) => Buffer;
+        readonly requestDeserialize: (value: Buffer) => ListTargetGroupsRequest;
+        readonly responseSerialize: (value: ListTargetGroupsResponse) => Buffer;
+        readonly responseDeserialize: (value: Buffer) => ListTargetGroupsResponse;
+    };
+    /** Creates a target group in the specified folder. */
+    readonly create: {
+        readonly path: "/yandex.cloud.apploadbalancer.v1.TargetGroupService/Create";
+        readonly requestStream: false;
+        readonly responseStream: false;
+        readonly requestSerialize: (value: CreateTargetGroupRequest) => Buffer;
+        readonly requestDeserialize: (value: Buffer) => CreateTargetGroupRequest;
+        readonly responseSerialize: (value: Operation) => Buffer;
+        readonly responseDeserialize: (value: Buffer) => Operation;
+    };
+    /** Updates the specified target group. */
+    readonly update: {
+        readonly path: "/yandex.cloud.apploadbalancer.v1.TargetGroupService/Update";
+        readonly requestStream: false;
+        readonly responseStream: false;
+        readonly requestSerialize: (value: UpdateTargetGroupRequest) => Buffer;
+        readonly requestDeserialize: (value: Buffer) => UpdateTargetGroupRequest;
+        readonly responseSerialize: (value: Operation) => Buffer;
+        readonly responseDeserialize: (value: Buffer) => Operation;
+    };
+    /** Deletes the specified target group. */
+    readonly delete: {
+        readonly path: "/yandex.cloud.apploadbalancer.v1.TargetGroupService/Delete";
+        readonly requestStream: false;
+        readonly responseStream: false;
+        readonly requestSerialize: (value: DeleteTargetGroupRequest) => Buffer;
+        readonly requestDeserialize: (value: Buffer) => DeleteTargetGroupRequest;
+        readonly responseSerialize: (value: Operation) => Buffer;
+        readonly responseDeserialize: (value: Buffer) => Operation;
+    };
+    /** Adds targets to the specified target group. */
+    readonly addTargets: {
+        readonly path: "/yandex.cloud.apploadbalancer.v1.TargetGroupService/AddTargets";
+        readonly requestStream: false;
+        readonly responseStream: false;
+        readonly requestSerialize: (value: AddTargetsRequest) => Buffer;
+        readonly requestDeserialize: (value: Buffer) => AddTargetsRequest;
+        readonly responseSerialize: (value: Operation) => Buffer;
+        readonly responseDeserialize: (value: Buffer) => Operation;
+    };
+    /** Removes targets from the specified target group. */
+    readonly removeTargets: {
+        readonly path: "/yandex.cloud.apploadbalancer.v1.TargetGroupService/RemoveTargets";
+        readonly requestStream: false;
+        readonly responseStream: false;
+        readonly requestSerialize: (value: RemoveTargetsRequest) => Buffer;
+        readonly requestDeserialize: (value: Buffer) => RemoveTargetsRequest;
+        readonly responseSerialize: (value: Operation) => Buffer;
+        readonly responseDeserialize: (value: Buffer) => Operation;
+    };
+    /** Lists operations for the specified target group. */
+    readonly listOperations: {
+        readonly path: "/yandex.cloud.apploadbalancer.v1.TargetGroupService/ListOperations";
+        readonly requestStream: false;
+        readonly responseStream: false;
+        readonly requestSerialize: (value: ListTargetGroupOperationsRequest) => Buffer;
+        readonly requestDeserialize: (value: Buffer) => ListTargetGroupOperationsRequest;
+        readonly responseSerialize: (value: ListTargetGroupOperationsResponse) => Buffer;
+        readonly responseDeserialize: (value: Buffer) => ListTargetGroupOperationsResponse;
+    };
+};
+export interface TargetGroupServiceServer extends UntypedServiceImplementation {
+    /**
+     * Returns the specified target group.
+     *
+     * To get the list of all available target groups, make a [List] request.
+     */
+    get: handleUnaryCall<GetTargetGroupRequest, TargetGroup>;
+    /** Lists target groups in the specified folder. */
+    list: handleUnaryCall<ListTargetGroupsRequest, ListTargetGroupsResponse>;
+    /** Creates a target group in the specified folder. */
+    create: handleUnaryCall<CreateTargetGroupRequest, Operation>;
+    /** Updates the specified target group. */
+    update: handleUnaryCall<UpdateTargetGroupRequest, Operation>;
+    /** Deletes the specified target group. */
+    delete: handleUnaryCall<DeleteTargetGroupRequest, Operation>;
+    /** Adds targets to the specified target group. */
+    addTargets: handleUnaryCall<AddTargetsRequest, Operation>;
+    /** Removes targets from the specified target group. */
+    removeTargets: handleUnaryCall<RemoveTargetsRequest, Operation>;
+    /** Lists operations for the specified target group. */
+    listOperations: handleUnaryCall<ListTargetGroupOperationsRequest, ListTargetGroupOperationsResponse>;
+}
+export interface TargetGroupServiceClient extends Client {
+    /**
+     * Returns the specified target group.
+     *
+     * To get the list of all available target groups, make a [List] request.
+     */
+    get(request: GetTargetGroupRequest, callback: (error: ServiceError | null, response: TargetGroup) => void): ClientUnaryCall;
+    get(request: GetTargetGroupRequest, metadata: Metadata, callback: (error: ServiceError | null, response: TargetGroup) => void): ClientUnaryCall;
+    get(request: GetTargetGroupRequest, metadata: Metadata, options: Partial<CallOptions>, callback: (error: ServiceError | null, response: TargetGroup) => void): ClientUnaryCall;
+    /** Lists target groups in the specified folder. */
+    list(request: ListTargetGroupsRequest, callback: (error: ServiceError | null, response: ListTargetGroupsResponse) => void): ClientUnaryCall;
+    list(request: ListTargetGroupsRequest, metadata: Metadata, callback: (error: ServiceError | null, response: ListTargetGroupsResponse) => void): ClientUnaryCall;
+    list(request: ListTargetGroupsRequest, metadata: Metadata, options: Partial<CallOptions>, callback: (error: ServiceError | null, response: ListTargetGroupsResponse) => void): ClientUnaryCall;
+    /** Creates a target group in the specified folder. */
+    create(request: CreateTargetGroupRequest, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    create(request: CreateTargetGroupRequest, metadata: Metadata, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    create(request: CreateTargetGroupRequest, metadata: Metadata, options: Partial<CallOptions>, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    /** Updates the specified target group. */
+    update(request: UpdateTargetGroupRequest, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    update(request: UpdateTargetGroupRequest, metadata: Metadata, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    update(request: UpdateTargetGroupRequest, metadata: Metadata, options: Partial<CallOptions>, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    /** Deletes the specified target group. */
+    delete(request: DeleteTargetGroupRequest, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    delete(request: DeleteTargetGroupRequest, metadata: Metadata, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    delete(request: DeleteTargetGroupRequest, metadata: Metadata, options: Partial<CallOptions>, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    /** Adds targets to the specified target group. */
+    addTargets(request: AddTargetsRequest, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    addTargets(request: AddTargetsRequest, metadata: Metadata, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    addTargets(request: AddTargetsRequest, metadata: Metadata, options: Partial<CallOptions>, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    /** Removes targets from the specified target group. */
+    removeTargets(request: RemoveTargetsRequest, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    removeTargets(request: RemoveTargetsRequest, metadata: Metadata, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    removeTargets(request: RemoveTargetsRequest, metadata: Metadata, options: Partial<CallOptions>, callback: (error: ServiceError | null, response: Operation) => void): ClientUnaryCall;
+    /** Lists operations for the specified target group. */
+    listOperations(request: ListTargetGroupOperationsRequest, callback: (error: ServiceError | null, response: ListTargetGroupOperationsResponse) => void): ClientUnaryCall;
+    listOperations(request: ListTargetGroupOperationsRequest, metadata: Metadata, callback: (error: ServiceError | null, response: ListTargetGroupOperationsResponse) => void): ClientUnaryCall;
+    listOperations(request: ListTargetGroupOperationsRequest, metadata: Metadata, options: Partial<CallOptions>, callback: (error: ServiceError | null, response: ListTargetGroupOperationsResponse) => void): ClientUnaryCall;
+}
+export declare const TargetGroupServiceClient: {
+    new (address: string, credentials: ChannelCredentials, options?: Partial<ChannelOptions> | undefined): TargetGroupServiceClient;
+    service: typeof TargetGroupServiceService;
+};
+declare type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+export declare type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {
+    [K in Exclude<keyof T, "$type">]?: DeepPartial<T[K]>;
+} : Partial<T>;
+declare type KeysOfUnion<T> = T extends T ? keyof T : never;
+export declare type Exact<P, I extends P> = P extends Builtin ? P : P & {
+    [K in keyof P]: Exact<P[K], I[K]>;
+} & Record<Exclude<keyof I, KeysOfUnion<P> | "$type">, never>;
+export {};

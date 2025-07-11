@@ -1,0 +1,891 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SubclusterServiceClient = exports.SubclusterServiceService = exports.DeleteSubclusterMetadata = exports.DeleteSubclusterRequest = exports.UpdateSubclusterMetadata = exports.UpdateSubclusterRequest = exports.CreateSubclusterMetadata = exports.CreateSubclusterRequest = exports.ListSubclustersResponse = exports.ListSubclustersRequest = exports.GetSubclusterRequest = exports.protobufPackage = void 0;
+/* eslint-disable */
+const typeRegistry_1 = require("../../../../typeRegistry");
+const long_1 = __importDefault(require("long"));
+const grpc_js_1 = require("@grpc/grpc-js");
+const minimal_1 = __importDefault(require("protobufjs/minimal"));
+const subcluster_1 = require("../../../../yandex/cloud/dataproc/v1/subcluster");
+const common_1 = require("../../../../yandex/cloud/dataproc/v1/common");
+const field_mask_1 = require("../../../../google/protobuf/field_mask");
+const operation_1 = require("../../../../yandex/cloud/operation/operation");
+exports.protobufPackage = "yandex.cloud.dataproc.v1";
+const baseGetSubclusterRequest = {
+    $type: "yandex.cloud.dataproc.v1.GetSubclusterRequest",
+    clusterId: "",
+    subclusterId: "",
+};
+exports.GetSubclusterRequest = {
+    $type: "yandex.cloud.dataproc.v1.GetSubclusterRequest",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.subclusterId !== "") {
+            writer.uint32(18).string(message.subclusterId);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseGetSubclusterRequest);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.subclusterId = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseGetSubclusterRequest);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.subclusterId =
+            object.subclusterId !== undefined && object.subclusterId !== null
+                ? String(object.subclusterId)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.subclusterId !== undefined &&
+            (obj.subclusterId = message.subclusterId);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b;
+        const message = Object.assign({}, baseGetSubclusterRequest);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.subclusterId = (_b = object.subclusterId) !== null && _b !== void 0 ? _b : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.GetSubclusterRequest.$type, exports.GetSubclusterRequest);
+const baseListSubclustersRequest = {
+    $type: "yandex.cloud.dataproc.v1.ListSubclustersRequest",
+    clusterId: "",
+    pageSize: 0,
+    pageToken: "",
+    filter: "",
+};
+exports.ListSubclustersRequest = {
+    $type: "yandex.cloud.dataproc.v1.ListSubclustersRequest",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.pageSize !== 0) {
+            writer.uint32(16).int64(message.pageSize);
+        }
+        if (message.pageToken !== "") {
+            writer.uint32(26).string(message.pageToken);
+        }
+        if (message.filter !== "") {
+            writer.uint32(34).string(message.filter);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseListSubclustersRequest);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.pageSize = longToNumber(reader.int64());
+                    break;
+                case 3:
+                    message.pageToken = reader.string();
+                    break;
+                case 4:
+                    message.filter = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseListSubclustersRequest);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.pageSize =
+            object.pageSize !== undefined && object.pageSize !== null
+                ? Number(object.pageSize)
+                : 0;
+        message.pageToken =
+            object.pageToken !== undefined && object.pageToken !== null
+                ? String(object.pageToken)
+                : "";
+        message.filter =
+            object.filter !== undefined && object.filter !== null
+                ? String(object.filter)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.pageSize !== undefined &&
+            (obj.pageSize = Math.round(message.pageSize));
+        message.pageToken !== undefined && (obj.pageToken = message.pageToken);
+        message.filter !== undefined && (obj.filter = message.filter);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b, _c, _d;
+        const message = Object.assign({}, baseListSubclustersRequest);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.pageSize = (_b = object.pageSize) !== null && _b !== void 0 ? _b : 0;
+        message.pageToken = (_c = object.pageToken) !== null && _c !== void 0 ? _c : "";
+        message.filter = (_d = object.filter) !== null && _d !== void 0 ? _d : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.ListSubclustersRequest.$type, exports.ListSubclustersRequest);
+const baseListSubclustersResponse = {
+    $type: "yandex.cloud.dataproc.v1.ListSubclustersResponse",
+    nextPageToken: "",
+};
+exports.ListSubclustersResponse = {
+    $type: "yandex.cloud.dataproc.v1.ListSubclustersResponse",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        for (const v of message.subclusters) {
+            subcluster_1.Subcluster.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.nextPageToken !== "") {
+            writer.uint32(18).string(message.nextPageToken);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseListSubclustersResponse);
+        message.subclusters = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.subclusters.push(subcluster_1.Subcluster.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.nextPageToken = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        var _a;
+        const message = Object.assign({}, baseListSubclustersResponse);
+        message.subclusters = ((_a = object.subclusters) !== null && _a !== void 0 ? _a : []).map((e) => subcluster_1.Subcluster.fromJSON(e));
+        message.nextPageToken =
+            object.nextPageToken !== undefined && object.nextPageToken !== null
+                ? String(object.nextPageToken)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.subclusters) {
+            obj.subclusters = message.subclusters.map((e) => e ? subcluster_1.Subcluster.toJSON(e) : undefined);
+        }
+        else {
+            obj.subclusters = [];
+        }
+        message.nextPageToken !== undefined &&
+            (obj.nextPageToken = message.nextPageToken);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b;
+        const message = Object.assign({}, baseListSubclustersResponse);
+        message.subclusters =
+            ((_a = object.subclusters) === null || _a === void 0 ? void 0 : _a.map((e) => subcluster_1.Subcluster.fromPartial(e))) || [];
+        message.nextPageToken = (_b = object.nextPageToken) !== null && _b !== void 0 ? _b : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.ListSubclustersResponse.$type, exports.ListSubclustersResponse);
+const baseCreateSubclusterRequest = {
+    $type: "yandex.cloud.dataproc.v1.CreateSubclusterRequest",
+    clusterId: "",
+    name: "",
+    role: 0,
+    subnetId: "",
+    hostsCount: 0,
+};
+exports.CreateSubclusterRequest = {
+    $type: "yandex.cloud.dataproc.v1.CreateSubclusterRequest",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.name !== "") {
+            writer.uint32(18).string(message.name);
+        }
+        if (message.role !== 0) {
+            writer.uint32(24).int32(message.role);
+        }
+        if (message.resources !== undefined) {
+            common_1.Resources.encode(message.resources, writer.uint32(34).fork()).ldelim();
+        }
+        if (message.subnetId !== "") {
+            writer.uint32(42).string(message.subnetId);
+        }
+        if (message.hostsCount !== 0) {
+            writer.uint32(48).int64(message.hostsCount);
+        }
+        if (message.autoscalingConfig !== undefined) {
+            subcluster_1.AutoscalingConfig.encode(message.autoscalingConfig, writer.uint32(58).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseCreateSubclusterRequest);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.name = reader.string();
+                    break;
+                case 3:
+                    message.role = reader.int32();
+                    break;
+                case 4:
+                    message.resources = common_1.Resources.decode(reader, reader.uint32());
+                    break;
+                case 5:
+                    message.subnetId = reader.string();
+                    break;
+                case 6:
+                    message.hostsCount = longToNumber(reader.int64());
+                    break;
+                case 7:
+                    message.autoscalingConfig = subcluster_1.AutoscalingConfig.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseCreateSubclusterRequest);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.name =
+            object.name !== undefined && object.name !== null
+                ? String(object.name)
+                : "";
+        message.role =
+            object.role !== undefined && object.role !== null
+                ? (0, subcluster_1.roleFromJSON)(object.role)
+                : 0;
+        message.resources =
+            object.resources !== undefined && object.resources !== null
+                ? common_1.Resources.fromJSON(object.resources)
+                : undefined;
+        message.subnetId =
+            object.subnetId !== undefined && object.subnetId !== null
+                ? String(object.subnetId)
+                : "";
+        message.hostsCount =
+            object.hostsCount !== undefined && object.hostsCount !== null
+                ? Number(object.hostsCount)
+                : 0;
+        message.autoscalingConfig =
+            object.autoscalingConfig !== undefined &&
+                object.autoscalingConfig !== null
+                ? subcluster_1.AutoscalingConfig.fromJSON(object.autoscalingConfig)
+                : undefined;
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.name !== undefined && (obj.name = message.name);
+        message.role !== undefined && (obj.role = (0, subcluster_1.roleToJSON)(message.role));
+        message.resources !== undefined &&
+            (obj.resources = message.resources
+                ? common_1.Resources.toJSON(message.resources)
+                : undefined);
+        message.subnetId !== undefined && (obj.subnetId = message.subnetId);
+        message.hostsCount !== undefined &&
+            (obj.hostsCount = Math.round(message.hostsCount));
+        message.autoscalingConfig !== undefined &&
+            (obj.autoscalingConfig = message.autoscalingConfig
+                ? subcluster_1.AutoscalingConfig.toJSON(message.autoscalingConfig)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b, _c, _d, _e;
+        const message = Object.assign({}, baseCreateSubclusterRequest);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.name = (_b = object.name) !== null && _b !== void 0 ? _b : "";
+        message.role = (_c = object.role) !== null && _c !== void 0 ? _c : 0;
+        message.resources =
+            object.resources !== undefined && object.resources !== null
+                ? common_1.Resources.fromPartial(object.resources)
+                : undefined;
+        message.subnetId = (_d = object.subnetId) !== null && _d !== void 0 ? _d : "";
+        message.hostsCount = (_e = object.hostsCount) !== null && _e !== void 0 ? _e : 0;
+        message.autoscalingConfig =
+            object.autoscalingConfig !== undefined &&
+                object.autoscalingConfig !== null
+                ? subcluster_1.AutoscalingConfig.fromPartial(object.autoscalingConfig)
+                : undefined;
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.CreateSubclusterRequest.$type, exports.CreateSubclusterRequest);
+const baseCreateSubclusterMetadata = {
+    $type: "yandex.cloud.dataproc.v1.CreateSubclusterMetadata",
+    clusterId: "",
+    subclusterId: "",
+};
+exports.CreateSubclusterMetadata = {
+    $type: "yandex.cloud.dataproc.v1.CreateSubclusterMetadata",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.subclusterId !== "") {
+            writer.uint32(18).string(message.subclusterId);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseCreateSubclusterMetadata);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.subclusterId = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseCreateSubclusterMetadata);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.subclusterId =
+            object.subclusterId !== undefined && object.subclusterId !== null
+                ? String(object.subclusterId)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.subclusterId !== undefined &&
+            (obj.subclusterId = message.subclusterId);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b;
+        const message = Object.assign({}, baseCreateSubclusterMetadata);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.subclusterId = (_b = object.subclusterId) !== null && _b !== void 0 ? _b : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.CreateSubclusterMetadata.$type, exports.CreateSubclusterMetadata);
+const baseUpdateSubclusterRequest = {
+    $type: "yandex.cloud.dataproc.v1.UpdateSubclusterRequest",
+    clusterId: "",
+    subclusterId: "",
+    name: "",
+    hostsCount: 0,
+    decommissionTimeout: 0,
+};
+exports.UpdateSubclusterRequest = {
+    $type: "yandex.cloud.dataproc.v1.UpdateSubclusterRequest",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.subclusterId !== "") {
+            writer.uint32(18).string(message.subclusterId);
+        }
+        if (message.updateMask !== undefined) {
+            field_mask_1.FieldMask.encode(message.updateMask, writer.uint32(26).fork()).ldelim();
+        }
+        if (message.resources !== undefined) {
+            common_1.Resources.encode(message.resources, writer.uint32(34).fork()).ldelim();
+        }
+        if (message.name !== "") {
+            writer.uint32(42).string(message.name);
+        }
+        if (message.hostsCount !== 0) {
+            writer.uint32(48).int64(message.hostsCount);
+        }
+        if (message.decommissionTimeout !== 0) {
+            writer.uint32(56).int64(message.decommissionTimeout);
+        }
+        if (message.autoscalingConfig !== undefined) {
+            subcluster_1.AutoscalingConfig.encode(message.autoscalingConfig, writer.uint32(66).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseUpdateSubclusterRequest);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.subclusterId = reader.string();
+                    break;
+                case 3:
+                    message.updateMask = field_mask_1.FieldMask.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.resources = common_1.Resources.decode(reader, reader.uint32());
+                    break;
+                case 5:
+                    message.name = reader.string();
+                    break;
+                case 6:
+                    message.hostsCount = longToNumber(reader.int64());
+                    break;
+                case 7:
+                    message.decommissionTimeout = longToNumber(reader.int64());
+                    break;
+                case 8:
+                    message.autoscalingConfig = subcluster_1.AutoscalingConfig.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseUpdateSubclusterRequest);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.subclusterId =
+            object.subclusterId !== undefined && object.subclusterId !== null
+                ? String(object.subclusterId)
+                : "";
+        message.updateMask =
+            object.updateMask !== undefined && object.updateMask !== null
+                ? field_mask_1.FieldMask.fromJSON(object.updateMask)
+                : undefined;
+        message.resources =
+            object.resources !== undefined && object.resources !== null
+                ? common_1.Resources.fromJSON(object.resources)
+                : undefined;
+        message.name =
+            object.name !== undefined && object.name !== null
+                ? String(object.name)
+                : "";
+        message.hostsCount =
+            object.hostsCount !== undefined && object.hostsCount !== null
+                ? Number(object.hostsCount)
+                : 0;
+        message.decommissionTimeout =
+            object.decommissionTimeout !== undefined &&
+                object.decommissionTimeout !== null
+                ? Number(object.decommissionTimeout)
+                : 0;
+        message.autoscalingConfig =
+            object.autoscalingConfig !== undefined &&
+                object.autoscalingConfig !== null
+                ? subcluster_1.AutoscalingConfig.fromJSON(object.autoscalingConfig)
+                : undefined;
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.subclusterId !== undefined &&
+            (obj.subclusterId = message.subclusterId);
+        message.updateMask !== undefined &&
+            (obj.updateMask = message.updateMask
+                ? field_mask_1.FieldMask.toJSON(message.updateMask)
+                : undefined);
+        message.resources !== undefined &&
+            (obj.resources = message.resources
+                ? common_1.Resources.toJSON(message.resources)
+                : undefined);
+        message.name !== undefined && (obj.name = message.name);
+        message.hostsCount !== undefined &&
+            (obj.hostsCount = Math.round(message.hostsCount));
+        message.decommissionTimeout !== undefined &&
+            (obj.decommissionTimeout = Math.round(message.decommissionTimeout));
+        message.autoscalingConfig !== undefined &&
+            (obj.autoscalingConfig = message.autoscalingConfig
+                ? subcluster_1.AutoscalingConfig.toJSON(message.autoscalingConfig)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b, _c, _d, _e;
+        const message = Object.assign({}, baseUpdateSubclusterRequest);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.subclusterId = (_b = object.subclusterId) !== null && _b !== void 0 ? _b : "";
+        message.updateMask =
+            object.updateMask !== undefined && object.updateMask !== null
+                ? field_mask_1.FieldMask.fromPartial(object.updateMask)
+                : undefined;
+        message.resources =
+            object.resources !== undefined && object.resources !== null
+                ? common_1.Resources.fromPartial(object.resources)
+                : undefined;
+        message.name = (_c = object.name) !== null && _c !== void 0 ? _c : "";
+        message.hostsCount = (_d = object.hostsCount) !== null && _d !== void 0 ? _d : 0;
+        message.decommissionTimeout = (_e = object.decommissionTimeout) !== null && _e !== void 0 ? _e : 0;
+        message.autoscalingConfig =
+            object.autoscalingConfig !== undefined &&
+                object.autoscalingConfig !== null
+                ? subcluster_1.AutoscalingConfig.fromPartial(object.autoscalingConfig)
+                : undefined;
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.UpdateSubclusterRequest.$type, exports.UpdateSubclusterRequest);
+const baseUpdateSubclusterMetadata = {
+    $type: "yandex.cloud.dataproc.v1.UpdateSubclusterMetadata",
+    clusterId: "",
+    subclusterId: "",
+};
+exports.UpdateSubclusterMetadata = {
+    $type: "yandex.cloud.dataproc.v1.UpdateSubclusterMetadata",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.subclusterId !== "") {
+            writer.uint32(18).string(message.subclusterId);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseUpdateSubclusterMetadata);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.subclusterId = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseUpdateSubclusterMetadata);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.subclusterId =
+            object.subclusterId !== undefined && object.subclusterId !== null
+                ? String(object.subclusterId)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.subclusterId !== undefined &&
+            (obj.subclusterId = message.subclusterId);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b;
+        const message = Object.assign({}, baseUpdateSubclusterMetadata);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.subclusterId = (_b = object.subclusterId) !== null && _b !== void 0 ? _b : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.UpdateSubclusterMetadata.$type, exports.UpdateSubclusterMetadata);
+const baseDeleteSubclusterRequest = {
+    $type: "yandex.cloud.dataproc.v1.DeleteSubclusterRequest",
+    clusterId: "",
+    subclusterId: "",
+    decommissionTimeout: 0,
+};
+exports.DeleteSubclusterRequest = {
+    $type: "yandex.cloud.dataproc.v1.DeleteSubclusterRequest",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.subclusterId !== "") {
+            writer.uint32(18).string(message.subclusterId);
+        }
+        if (message.decommissionTimeout !== 0) {
+            writer.uint32(24).int64(message.decommissionTimeout);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseDeleteSubclusterRequest);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.subclusterId = reader.string();
+                    break;
+                case 3:
+                    message.decommissionTimeout = longToNumber(reader.int64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseDeleteSubclusterRequest);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.subclusterId =
+            object.subclusterId !== undefined && object.subclusterId !== null
+                ? String(object.subclusterId)
+                : "";
+        message.decommissionTimeout =
+            object.decommissionTimeout !== undefined &&
+                object.decommissionTimeout !== null
+                ? Number(object.decommissionTimeout)
+                : 0;
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.subclusterId !== undefined &&
+            (obj.subclusterId = message.subclusterId);
+        message.decommissionTimeout !== undefined &&
+            (obj.decommissionTimeout = Math.round(message.decommissionTimeout));
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b, _c;
+        const message = Object.assign({}, baseDeleteSubclusterRequest);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.subclusterId = (_b = object.subclusterId) !== null && _b !== void 0 ? _b : "";
+        message.decommissionTimeout = (_c = object.decommissionTimeout) !== null && _c !== void 0 ? _c : 0;
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.DeleteSubclusterRequest.$type, exports.DeleteSubclusterRequest);
+const baseDeleteSubclusterMetadata = {
+    $type: "yandex.cloud.dataproc.v1.DeleteSubclusterMetadata",
+    clusterId: "",
+    subclusterId: "",
+};
+exports.DeleteSubclusterMetadata = {
+    $type: "yandex.cloud.dataproc.v1.DeleteSubclusterMetadata",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.subclusterId !== "") {
+            writer.uint32(18).string(message.subclusterId);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseDeleteSubclusterMetadata);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.subclusterId = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseDeleteSubclusterMetadata);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.subclusterId =
+            object.subclusterId !== undefined && object.subclusterId !== null
+                ? String(object.subclusterId)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.subclusterId !== undefined &&
+            (obj.subclusterId = message.subclusterId);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b;
+        const message = Object.assign({}, baseDeleteSubclusterMetadata);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.subclusterId = (_b = object.subclusterId) !== null && _b !== void 0 ? _b : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.DeleteSubclusterMetadata.$type, exports.DeleteSubclusterMetadata);
+/** A set of methods for managing Data Proc subclusters. */
+exports.SubclusterServiceService = {
+    /**
+     * Returns the specified subcluster.
+     *
+     * To get the list of all available subclusters, make a [SubclusterService.List] request.
+     */
+    get: {
+        path: "/yandex.cloud.dataproc.v1.SubclusterService/Get",
+        requestStream: false,
+        responseStream: false,
+        requestSerialize: (value) => Buffer.from(exports.GetSubclusterRequest.encode(value).finish()),
+        requestDeserialize: (value) => exports.GetSubclusterRequest.decode(value),
+        responseSerialize: (value) => Buffer.from(subcluster_1.Subcluster.encode(value).finish()),
+        responseDeserialize: (value) => subcluster_1.Subcluster.decode(value),
+    },
+    /** Retrieves a list of subclusters in the specified cluster. */
+    list: {
+        path: "/yandex.cloud.dataproc.v1.SubclusterService/List",
+        requestStream: false,
+        responseStream: false,
+        requestSerialize: (value) => Buffer.from(exports.ListSubclustersRequest.encode(value).finish()),
+        requestDeserialize: (value) => exports.ListSubclustersRequest.decode(value),
+        responseSerialize: (value) => Buffer.from(exports.ListSubclustersResponse.encode(value).finish()),
+        responseDeserialize: (value) => exports.ListSubclustersResponse.decode(value),
+    },
+    /** Creates a subcluster in the specified cluster. */
+    create: {
+        path: "/yandex.cloud.dataproc.v1.SubclusterService/Create",
+        requestStream: false,
+        responseStream: false,
+        requestSerialize: (value) => Buffer.from(exports.CreateSubclusterRequest.encode(value).finish()),
+        requestDeserialize: (value) => exports.CreateSubclusterRequest.decode(value),
+        responseSerialize: (value) => Buffer.from(operation_1.Operation.encode(value).finish()),
+        responseDeserialize: (value) => operation_1.Operation.decode(value),
+    },
+    /** Updates the specified subcluster. */
+    update: {
+        path: "/yandex.cloud.dataproc.v1.SubclusterService/Update",
+        requestStream: false,
+        responseStream: false,
+        requestSerialize: (value) => Buffer.from(exports.UpdateSubclusterRequest.encode(value).finish()),
+        requestDeserialize: (value) => exports.UpdateSubclusterRequest.decode(value),
+        responseSerialize: (value) => Buffer.from(operation_1.Operation.encode(value).finish()),
+        responseDeserialize: (value) => operation_1.Operation.decode(value),
+    },
+    /** Deletes the specified subcluster. */
+    delete: {
+        path: "/yandex.cloud.dataproc.v1.SubclusterService/Delete",
+        requestStream: false,
+        responseStream: false,
+        requestSerialize: (value) => Buffer.from(exports.DeleteSubclusterRequest.encode(value).finish()),
+        requestDeserialize: (value) => exports.DeleteSubclusterRequest.decode(value),
+        responseSerialize: (value) => Buffer.from(operation_1.Operation.encode(value).finish()),
+        responseDeserialize: (value) => operation_1.Operation.decode(value),
+    },
+};
+exports.SubclusterServiceClient = (0, grpc_js_1.makeGenericClientConstructor)(exports.SubclusterServiceService, "yandex.cloud.dataproc.v1.SubclusterService");
+var globalThis = (() => {
+    if (typeof globalThis !== "undefined")
+        return globalThis;
+    if (typeof self !== "undefined")
+        return self;
+    if (typeof window !== "undefined")
+        return window;
+    if (typeof global !== "undefined")
+        return global;
+    throw "Unable to locate global object";
+})();
+function longToNumber(long) {
+    if (long.gt(Number.MAX_SAFE_INTEGER)) {
+        throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+    }
+    return long.toNumber();
+}
+if (minimal_1.default.util.Long !== long_1.default) {
+    minimal_1.default.util.Long = long_1.default;
+    minimal_1.default.configure();
+}

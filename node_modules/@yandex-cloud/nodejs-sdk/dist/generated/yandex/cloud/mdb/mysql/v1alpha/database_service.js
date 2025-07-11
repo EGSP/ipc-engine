@@ -1,0 +1,552 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DatabaseServiceClient = exports.DatabaseServiceService = exports.DeleteDatabaseMetadata = exports.DeleteDatabaseRequest = exports.CreateDatabaseMetadata = exports.CreateDatabaseRequest = exports.ListDatabasesResponse = exports.ListDatabasesRequest = exports.GetDatabaseRequest = exports.protobufPackage = void 0;
+/* eslint-disable */
+const typeRegistry_1 = require("../../../../../typeRegistry");
+const long_1 = __importDefault(require("long"));
+const grpc_js_1 = require("@grpc/grpc-js");
+const minimal_1 = __importDefault(require("protobufjs/minimal"));
+const database_1 = require("../../../../../yandex/cloud/mdb/mysql/v1alpha/database");
+const operation_1 = require("../../../../../yandex/cloud/operation/operation");
+exports.protobufPackage = "yandex.cloud.mdb.mysql.v1alpha";
+const baseGetDatabaseRequest = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.GetDatabaseRequest",
+    clusterId: "",
+    databaseName: "",
+};
+exports.GetDatabaseRequest = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.GetDatabaseRequest",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.databaseName !== "") {
+            writer.uint32(18).string(message.databaseName);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseGetDatabaseRequest);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.databaseName = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseGetDatabaseRequest);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.databaseName =
+            object.databaseName !== undefined && object.databaseName !== null
+                ? String(object.databaseName)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.databaseName !== undefined &&
+            (obj.databaseName = message.databaseName);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b;
+        const message = Object.assign({}, baseGetDatabaseRequest);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.databaseName = (_b = object.databaseName) !== null && _b !== void 0 ? _b : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.GetDatabaseRequest.$type, exports.GetDatabaseRequest);
+const baseListDatabasesRequest = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.ListDatabasesRequest",
+    clusterId: "",
+    pageSize: 0,
+    pageToken: "",
+};
+exports.ListDatabasesRequest = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.ListDatabasesRequest",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.pageSize !== 0) {
+            writer.uint32(16).int64(message.pageSize);
+        }
+        if (message.pageToken !== "") {
+            writer.uint32(26).string(message.pageToken);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseListDatabasesRequest);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.pageSize = longToNumber(reader.int64());
+                    break;
+                case 3:
+                    message.pageToken = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseListDatabasesRequest);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.pageSize =
+            object.pageSize !== undefined && object.pageSize !== null
+                ? Number(object.pageSize)
+                : 0;
+        message.pageToken =
+            object.pageToken !== undefined && object.pageToken !== null
+                ? String(object.pageToken)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.pageSize !== undefined &&
+            (obj.pageSize = Math.round(message.pageSize));
+        message.pageToken !== undefined && (obj.pageToken = message.pageToken);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b, _c;
+        const message = Object.assign({}, baseListDatabasesRequest);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.pageSize = (_b = object.pageSize) !== null && _b !== void 0 ? _b : 0;
+        message.pageToken = (_c = object.pageToken) !== null && _c !== void 0 ? _c : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.ListDatabasesRequest.$type, exports.ListDatabasesRequest);
+const baseListDatabasesResponse = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.ListDatabasesResponse",
+    nextPageToken: "",
+};
+exports.ListDatabasesResponse = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.ListDatabasesResponse",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        for (const v of message.databases) {
+            database_1.Database.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.nextPageToken !== "") {
+            writer.uint32(18).string(message.nextPageToken);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseListDatabasesResponse);
+        message.databases = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.databases.push(database_1.Database.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.nextPageToken = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        var _a;
+        const message = Object.assign({}, baseListDatabasesResponse);
+        message.databases = ((_a = object.databases) !== null && _a !== void 0 ? _a : []).map((e) => database_1.Database.fromJSON(e));
+        message.nextPageToken =
+            object.nextPageToken !== undefined && object.nextPageToken !== null
+                ? String(object.nextPageToken)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.databases) {
+            obj.databases = message.databases.map((e) => e ? database_1.Database.toJSON(e) : undefined);
+        }
+        else {
+            obj.databases = [];
+        }
+        message.nextPageToken !== undefined &&
+            (obj.nextPageToken = message.nextPageToken);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b;
+        const message = Object.assign({}, baseListDatabasesResponse);
+        message.databases =
+            ((_a = object.databases) === null || _a === void 0 ? void 0 : _a.map((e) => database_1.Database.fromPartial(e))) || [];
+        message.nextPageToken = (_b = object.nextPageToken) !== null && _b !== void 0 ? _b : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.ListDatabasesResponse.$type, exports.ListDatabasesResponse);
+const baseCreateDatabaseRequest = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.CreateDatabaseRequest",
+    clusterId: "",
+};
+exports.CreateDatabaseRequest = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.CreateDatabaseRequest",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.databaseSpec !== undefined) {
+            database_1.DatabaseSpec.encode(message.databaseSpec, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseCreateDatabaseRequest);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.databaseSpec = database_1.DatabaseSpec.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseCreateDatabaseRequest);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.databaseSpec =
+            object.databaseSpec !== undefined && object.databaseSpec !== null
+                ? database_1.DatabaseSpec.fromJSON(object.databaseSpec)
+                : undefined;
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.databaseSpec !== undefined &&
+            (obj.databaseSpec = message.databaseSpec
+                ? database_1.DatabaseSpec.toJSON(message.databaseSpec)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a;
+        const message = Object.assign({}, baseCreateDatabaseRequest);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.databaseSpec =
+            object.databaseSpec !== undefined && object.databaseSpec !== null
+                ? database_1.DatabaseSpec.fromPartial(object.databaseSpec)
+                : undefined;
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.CreateDatabaseRequest.$type, exports.CreateDatabaseRequest);
+const baseCreateDatabaseMetadata = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.CreateDatabaseMetadata",
+    clusterId: "",
+    databaseName: "",
+};
+exports.CreateDatabaseMetadata = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.CreateDatabaseMetadata",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.databaseName !== "") {
+            writer.uint32(18).string(message.databaseName);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseCreateDatabaseMetadata);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.databaseName = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseCreateDatabaseMetadata);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.databaseName =
+            object.databaseName !== undefined && object.databaseName !== null
+                ? String(object.databaseName)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.databaseName !== undefined &&
+            (obj.databaseName = message.databaseName);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b;
+        const message = Object.assign({}, baseCreateDatabaseMetadata);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.databaseName = (_b = object.databaseName) !== null && _b !== void 0 ? _b : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.CreateDatabaseMetadata.$type, exports.CreateDatabaseMetadata);
+const baseDeleteDatabaseRequest = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.DeleteDatabaseRequest",
+    clusterId: "",
+    databaseName: "",
+};
+exports.DeleteDatabaseRequest = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.DeleteDatabaseRequest",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.databaseName !== "") {
+            writer.uint32(18).string(message.databaseName);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseDeleteDatabaseRequest);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.databaseName = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseDeleteDatabaseRequest);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.databaseName =
+            object.databaseName !== undefined && object.databaseName !== null
+                ? String(object.databaseName)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.databaseName !== undefined &&
+            (obj.databaseName = message.databaseName);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b;
+        const message = Object.assign({}, baseDeleteDatabaseRequest);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.databaseName = (_b = object.databaseName) !== null && _b !== void 0 ? _b : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.DeleteDatabaseRequest.$type, exports.DeleteDatabaseRequest);
+const baseDeleteDatabaseMetadata = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.DeleteDatabaseMetadata",
+    clusterId: "",
+    databaseName: "",
+};
+exports.DeleteDatabaseMetadata = {
+    $type: "yandex.cloud.mdb.mysql.v1alpha.DeleteDatabaseMetadata",
+    encode(message, writer = minimal_1.default.Writer.create()) {
+        if (message.clusterId !== "") {
+            writer.uint32(10).string(message.clusterId);
+        }
+        if (message.databaseName !== "") {
+            writer.uint32(18).string(message.databaseName);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof minimal_1.default.Reader ? input : new minimal_1.default.Reader(input);
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = Object.assign({}, baseDeleteDatabaseMetadata);
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.clusterId = reader.string();
+                    break;
+                case 2:
+                    message.databaseName = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = Object.assign({}, baseDeleteDatabaseMetadata);
+        message.clusterId =
+            object.clusterId !== undefined && object.clusterId !== null
+                ? String(object.clusterId)
+                : "";
+        message.databaseName =
+            object.databaseName !== undefined && object.databaseName !== null
+                ? String(object.databaseName)
+                : "";
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.clusterId !== undefined && (obj.clusterId = message.clusterId);
+        message.databaseName !== undefined &&
+            (obj.databaseName = message.databaseName);
+        return obj;
+    },
+    fromPartial(object) {
+        var _a, _b;
+        const message = Object.assign({}, baseDeleteDatabaseMetadata);
+        message.clusterId = (_a = object.clusterId) !== null && _a !== void 0 ? _a : "";
+        message.databaseName = (_b = object.databaseName) !== null && _b !== void 0 ? _b : "";
+        return message;
+    },
+};
+typeRegistry_1.messageTypeRegistry.set(exports.DeleteDatabaseMetadata.$type, exports.DeleteDatabaseMetadata);
+/** A set of methods for managing MySQL databases. */
+exports.DatabaseServiceService = {
+    /**
+     * Returns the specified MySQL database.
+     *
+     * To get the list of available MySQL databases, make a [List] request.
+     */
+    get: {
+        path: "/yandex.cloud.mdb.mysql.v1alpha.DatabaseService/Get",
+        requestStream: false,
+        responseStream: false,
+        requestSerialize: (value) => Buffer.from(exports.GetDatabaseRequest.encode(value).finish()),
+        requestDeserialize: (value) => exports.GetDatabaseRequest.decode(value),
+        responseSerialize: (value) => Buffer.from(database_1.Database.encode(value).finish()),
+        responseDeserialize: (value) => database_1.Database.decode(value),
+    },
+    /** Retrieves the list of MySQL databases in the specified cluster. */
+    list: {
+        path: "/yandex.cloud.mdb.mysql.v1alpha.DatabaseService/List",
+        requestStream: false,
+        responseStream: false,
+        requestSerialize: (value) => Buffer.from(exports.ListDatabasesRequest.encode(value).finish()),
+        requestDeserialize: (value) => exports.ListDatabasesRequest.decode(value),
+        responseSerialize: (value) => Buffer.from(exports.ListDatabasesResponse.encode(value).finish()),
+        responseDeserialize: (value) => exports.ListDatabasesResponse.decode(value),
+    },
+    /** Creates a new MySQL database in the specified cluster. */
+    create: {
+        path: "/yandex.cloud.mdb.mysql.v1alpha.DatabaseService/Create",
+        requestStream: false,
+        responseStream: false,
+        requestSerialize: (value) => Buffer.from(exports.CreateDatabaseRequest.encode(value).finish()),
+        requestDeserialize: (value) => exports.CreateDatabaseRequest.decode(value),
+        responseSerialize: (value) => Buffer.from(operation_1.Operation.encode(value).finish()),
+        responseDeserialize: (value) => operation_1.Operation.decode(value),
+    },
+    /** Deletes the specified MySQL database. */
+    delete: {
+        path: "/yandex.cloud.mdb.mysql.v1alpha.DatabaseService/Delete",
+        requestStream: false,
+        responseStream: false,
+        requestSerialize: (value) => Buffer.from(exports.DeleteDatabaseRequest.encode(value).finish()),
+        requestDeserialize: (value) => exports.DeleteDatabaseRequest.decode(value),
+        responseSerialize: (value) => Buffer.from(operation_1.Operation.encode(value).finish()),
+        responseDeserialize: (value) => operation_1.Operation.decode(value),
+    },
+};
+exports.DatabaseServiceClient = (0, grpc_js_1.makeGenericClientConstructor)(exports.DatabaseServiceService, "yandex.cloud.mdb.mysql.v1alpha.DatabaseService");
+var globalThis = (() => {
+    if (typeof globalThis !== "undefined")
+        return globalThis;
+    if (typeof self !== "undefined")
+        return self;
+    if (typeof window !== "undefined")
+        return window;
+    if (typeof global !== "undefined")
+        return global;
+    throw "Unable to locate global object";
+})();
+function longToNumber(long) {
+    if (long.gt(Number.MAX_SAFE_INTEGER)) {
+        throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+    }
+    return long.toNumber();
+}
+if (minimal_1.default.util.Long !== long_1.default) {
+    minimal_1.default.util.Long = long_1.default;
+    minimal_1.default.configure();
+}

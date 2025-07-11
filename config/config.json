@@ -1,0 +1,17 @@
+{
+    "httpServer": {
+        "port": 5020
+    },
+    "yandexCloud": {
+        "iamToken": "ВАШ_IAM_ТОКЕН",
+        "catalogId": "ВАШ_CATALOG_ID",
+        "gptModelPath": "gpt://ВАШ_CATALOG_ID/yandexgpt-lite/latest",
+        "ocrApiUrl": "https://vision.api.cloud.yandex.net/vision/v1/batchAnalyze"
+    },
+    "logging": {
+        "logLevel": "info"
+    },
+    "paths": {
+        "queueFolder": "data/queue"
+    }
+}

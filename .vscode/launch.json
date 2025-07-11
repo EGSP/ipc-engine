@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Запуск ipc-engine (server.js)",
+            "program": "${workspaceFolder}/code/server.js",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "node",
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Отладка с nodemon",
+            "runtimeExecutable": "nodemon",
+            "program": "${workspaceFolder}/server.js",
+            "restart": true,
+            "console": "integratedTerminal"
+        }
+    ]
+}
