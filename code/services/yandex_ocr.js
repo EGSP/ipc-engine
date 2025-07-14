@@ -1,8 +1,8 @@
-const fs = require('fs').promises;
-const path = require('path');
-const axios = require('axios');
-const configService = require('./configService');
-const { getSession } = require('./yandexClient');
+import { promises as fs } from 'fs';
+import { resolve, dirname, join, extname } from 'path';
+import { post } from 'axios';
+import { getConfigValue } from './configService';
+import { getSession } from './yandexClient';
 
 /**
  * Получение абсолютного пути до папки очереди из конфига.
@@ -10,17 +10,17 @@ const { getSession } = require('./yandexClient');
  */
 function getQueueDirectory() {
     // Получаем путь из конфига, например: "data/queue"
-    const relativeQueuePath = configService.getConfigValue('paths.queueFolder');
+    const relativeQueuePath = getConfigValue('paths.queueFolder');
     if (!relativeQueuePath) {
         throw new Error('Путь к папке очереди не задан в конфиге (ключ paths.queueFolder)');
     }
 
     // Для dev и prod вычисляем по-разному
     const execDir = process.env.NODE_ENV === 'development'
-        ? path.resolve(__dirname, '..', '..') // корень проекта в dev
-        : path.dirname(process.execPath);      // папка exe в prod
+        ? resolve(__dirname, '..', '..') // корень проекта в dev
+        : dirname(process.execPath);      // папка exe в prod
 
-    const fullQueuePath = path.resolve(execDir, relativeQueuePath);
+    const fullQueuePath = resolve(execDir, relativeQueuePath);
 
     return fullQueuePath;
 }
@@ -35,7 +35,7 @@ async function listFilesInQueue() {
     try {
         const files = await fs.readdir(queueDir);
         const fileChecks = await Promise.all(files.map(async (file) => {
-            const fullPath = path.join(queueDir, file);
+            const fullPath = join(queueDir, file);
             const stat = await fs.stat(fullPath);
             return stat.isFile() ? file : null;
         }));
@@ -53,7 +53,7 @@ async function listFilesInQueue() {
  * @returns {string} mime-type
  */
 function getMimeTypeByFilename(filename) {
-    const ext = path.extname(filename).toLowerCase();
+    const ext = extname(filename).toLowerCase();
     switch (ext) {
         case '.pdf': return 'application/pdf';
         case '.png': return 'image/png';
@@ -74,16 +74,16 @@ function getMimeTypeByFilename(filename) {
  */
 async function sendFileToOCR(fileName) {
     const queueDir = getQueueDirectory();
-    const filePath = path.join(queueDir, fileName);
+    const filePath = join(queueDir, fileName);
 
     try {
         // Проверяем доступность файла
         await fs.access(filePath);
 
         // Загружаем параметры для Yandex OCR из конфига
-        const iamToken = configService.getConfigValue('yandexCloud.iamToken');
-        const folderId = configService.getConfigValue('yandexCloud.catalogId');
-        const ocrApiUrl = configService.getConfigValue('yandexCloud.ocrApiUrl');
+        const iamToken = getConfigValue('yandexCloud.iamToken');
+        const folderId = getConfigValue('yandexCloud.catalogId');
+        const ocrApiUrl = getConfigValue('yandexCloud.ocrApiUrl');
 
         if (!iamToken || !folderId || !ocrApiUrl) {
             throw new Error('Недостаточно данных для вызова Yandex OCR API: проверьте конфигурацию');
@@ -106,7 +106,7 @@ async function sendFileToOCR(fileName) {
         };
 
         // Выполняем POST-запрос к Yandex OCR API
-        const response = await axios.post(ocrApiUrl, requestBody, {
+        const response = await post(ocrApiUrl, requestBody, {
             headers: {
                 'Authorization': `Bearer ${iamToken}`,
                 'Content-Type': 'application/json'
@@ -223,7 +223,7 @@ async function expressProcessQueueHandler(req, res) {
     }
 }
 
-module.exports = {
+export default {
     listFilesInQueue,
     sendFileToOCR,
     processFilesFromQueue,
