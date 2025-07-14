@@ -3,6 +3,9 @@
         "port": 5020
     },
     "yandexCloud": {
+        "identity":{
+            "serviceAccountId": "ВАШ_SERVICE_ACCOUNT_ID"
+        },
         "iamToken": "ВАШ_IAM_ТОКЕН",
         "catalogId": "ВАШ_CATALOG_ID",
         "gptModelPath": "gpt://ВАШ_CATALOG_ID/yandexgpt-lite/latest",
