@@ -1,49 +1,60 @@
 import { promises as fs } from 'fs';
+import fsSync from 'fs';
 import { resolve, dirname, join, extname } from 'path';
-import { post } from 'axios';
-import { getConfigValue } from './configService';
-import { getSession } from './yandexClient';
+import config_service from './config_service.js';
+import yandex_client from './yandex_client.js';
+import axios from 'axios';
+
+const OCR_API_URL = 'https://ocr.api.cloud.yandex.net/ocr/v1/recognizeText';
 
 /**
  * Получение абсолютного пути до папки очереди из конфига.
  * Если папка не существует — ошибка.
  */
-function getQueueDirectory() {
+function get_queue_directory() {
+
+    let config = config_service.get_config();
     // Получаем путь из конфига, например: "data/queue"
-    const relativeQueuePath = getConfigValue('paths.queueFolder');
+    const relativeQueuePath = config.paths.queue;
     if (!relativeQueuePath) {
         throw new Error('Путь к папке очереди не задан в конфиге (ключ paths.queueFolder)');
     }
+    const queue_path = resolve(config_service.get_execution_directory(), relativeQueuePath);
 
-    // Для dev и prod вычисляем по-разному
-    const execDir = process.env.NODE_ENV === 'development'
-        ? resolve(__dirname, '..', '..') // корень проекта в dev
-        : dirname(process.execPath);      // папка exe в prod
+    // check and create
+    if (!fsSync.existsSync(queue_path)) {
+        console.log(`Создаем папку очереди: ${queue_path}`);
+        fsSync.mkdirSync(queue_path, { recursive: true });
+    }
 
-    const fullQueuePath = resolve(execDir, relativeQueuePath);
-
-    return fullQueuePath;
+    return queue_path;
 }
 
+
 /**
- * Асинхронно получить список файлов в папке очереди.
- * Возвращает массив имён файлов (без директорий).
+ * Асинхронная функция, возвращающая список файлов в очереди на OCR.
+ * @returns {Promise<string[]>} Список файлов
  */
-async function listFilesInQueue() {
-    const queueDir = getQueueDirectory();
+async function get_queued_files() {
+    console.log(`Получаем список файлов в очереди...`);
+    const queueDir = get_queue_directory();
 
     try {
         const files = await fs.readdir(queueDir);
-        const fileChecks = await Promise.all(files.map(async (file) => {
-            const fullPath = join(queueDir, file);
-            const stat = await fs.stat(fullPath);
-            return stat.isFile() ? file : null;
-        }));
+        const fileChecks = await Promise.all(
+            files.map(async (file) => {
+                const fullPath = join(queueDir, file);
+                const stat = await fs.stat(fullPath);
+                return stat.isFile() ? file : null;
+            })
+        );
+
+        console.log(`Найдено ${fileChecks.length} файлов в очереди`);
 
         // Фильтруем null и возвращаем только файлы
         return fileChecks.filter(Boolean);
     } catch (err) {
-        throw new Error(`Ошибка чтения файлов из очереди OCR: ${err.message}`);
+        throw new Error(`Ошибка чтения файлов из очереди: ${err.message}`);
     }
 }
 
@@ -52,17 +63,14 @@ async function listFilesInQueue() {
  * @param {string} filename 
  * @returns {string} mime-type
  */
-function getMimeTypeByFilename(filename) {
+function get_mime_type(filename) {
     const ext = extname(filename).toLowerCase();
     switch (ext) {
-        case '.pdf': return 'application/pdf';
-        case '.png': return 'image/png';
+        case '.pdf': return 'PDF';
+        case '.png': return 'PNG';
         case '.jpg':
-        case '.jpeg': return 'image/jpeg';
-        case '.tiff':
-        case '.tif': return 'image/tiff';
-        case '.bmp': return 'image/bmp';
-        default: return 'application/octet-stream';
+        case '.jpeg': return 'JPEG';
+        default: return null;
     }
 }
 
@@ -73,55 +81,58 @@ function getMimeTypeByFilename(filename) {
  * @returns {Promise<Object>} { success, fileName, ocrResult?, errorMessage? }
  */
 async function sendFileToOCR(fileName) {
-    const queueDir = getQueueDirectory();
+    const queueDir = get_queue_directory();
     const filePath = join(queueDir, fileName);
 
     try {
         // Проверяем доступность файла
         await fs.access(filePath);
 
+        let yandex_config = config_service.get_yandex_config();
         // Загружаем параметры для Yandex OCR из конфига
-        const iamToken = getConfigValue('yandexCloud.iamToken');
-        const folderId = getConfigValue('yandexCloud.catalogId');
-        const ocrApiUrl = getConfigValue('yandexCloud.ocrApiUrl');
+        const iamToken = await yandex_client.get_iam_token();
+        const folderId = yandex_config.cloud.catalog_id;
 
-        if (!iamToken || !folderId || !ocrApiUrl) {
-            throw new Error('Недостаточно данных для вызова Yandex OCR API: проверьте конфигурацию');
+        if (!iamToken) {
+            throw new Error('IAM токен отсутствует: проверьте конфигурацию');
+        }
+        if (!folderId) {
+            throw new Error('ID каталога отсутствует: проверьте конфигурацию');
         }
 
         // Читаем файл и конвертируем в base64
         const fileBuffer = await fs.readFile(filePath);
         const fileBase64 = fileBuffer.toString('base64');
 
-        // Формируем тело запроса API
-        const requestBody = {
-            analyzeSpecs: [
-                {
-                    content: fileBase64,
-                    features: [{ type: 'TEXT_DETECTION' }],
-                    mimeType: getMimeTypeByFilename(fileName)
-                }
-            ],
-            folderId: folderId
+        let data = {
+            content: fileBase64,
+            mimeType: get_mime_type(fileName),
+            languageCodes: ['*'],
+            model: "page"
         };
 
+        let headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${iamToken}`,
+            'x-folder-id': folderId,
+            'x-data-logging-enabled': true
+        }      
+
+        console.log(`Отправляем файл "${fileName}" на Yandex OCR...`);
         // Выполняем POST-запрос к Yandex OCR API
-        const response = await post(ocrApiUrl, requestBody, {
-            headers: {
-                'Authorization': `Bearer ${iamToken}`,
-                'Content-Type': 'application/json'
-            },
-            timeout: 30000
-        });
+        let response = await axios.post(OCR_API_URL, JSON.stringify(data),
+         { headers: headers, timeout: 10000 });
 
         if (response.status !== 200) {
             throw new Error(`OCR API вернул статус ${response.status}`);
         }
 
-        if (!response.data || !response.data.results || response.data.results.length === 0) {
+        if (!response.data?.results?.length) {
             throw new Error('OCR API вернул пустой результат');
         }
 
+        console.log(`OCR API вернул результат: ${JSON.stringify(response.data)}`);
+        backup_result(JSON.stringify(response.data));
         // Возвращаем успешный результат
         return {
             success: true,
@@ -139,40 +150,11 @@ async function sendFileToOCR(fileName) {
 }
 
 /**
- * Обрабатывает файлы из очереди по одному.
- * Принимает максимальное количество файлов для обработки (если не указано — обрабатывает все).
- * Возвращает массив результатов обработки каждого файла.
- * @param {number} [maxFiles] Максимум файлов для обработки
- * @returns {Promise<Array>} Массив объектов результатов {success, fileName, ...}
- */
-async function processFilesFromQueue(maxFiles) {
-    try {
-        const files = await listFilesInQueue();
-        const filesToProcess = typeof maxFiles === 'number' ? files.slice(0, maxFiles) : files;
-
-        if (filesToProcess.length === 0) {
-            return [];
-        }
-
-        const results = [];
-        for (const fileName of filesToProcess) {
-            const result = await sendFileToOCR(fileName);
-            results.push(result);
-        }
-
-        return results;
-
-    } catch (error) {
-        throw new Error(`Ошибка обработки файлов из очереди: ${error.message}`);
-    }
-}
-
-/**
  * Express middleware: возвращает список файлов в очереди OCR
  */
 async function expressListQueueHandler(req, res) {
     try {
-        const files = await listFilesInQueue();
+        const files = await get_queued_files();
         res.json({
             success: true,
             count: files.length,
@@ -186,47 +168,17 @@ async function expressListQueueHandler(req, res) {
     }
 }
 
-/**
- * Express middleware: запускает обработку файлов из очереди.
- * Принимает в query параметре ?max=<число> — ограничение по количеству файлов.
- * Возвращает массив результатов обработки.
- */
-async function expressProcessQueueHandler(req, res) {
-    try {
-        const maxFilesParam = req.query.max;
-        let maxFiles = undefined;
-
-        if (maxFilesParam !== undefined) {
-            const parsed = parseInt(maxFilesParam, 10);
-            if (!isNaN(parsed) && parsed > 0) {
-                maxFiles = parsed;
-            } else {
-                return res.status(400).json({
-                    success: false,
-                    errorMessage: 'Параметр max должен быть положительным числом'
-                });
-            }
-        }
-
-        const results = await processFilesFromQueue(maxFiles);
-        res.json({
-            success: true,
-            processedCount: results.length,
-            results
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            errorMessage: `Ошибка при обработке очереди OCR: ${error.message}`
-        });
-    }
+async function backup_result(result){
+    let directory = get_queue_directory();
+    let filename = `ocr_result_${Date.now().toLocaleString()}.json`;
+    let filepath = join(directory, filename);
+    await fs.writeFile(filepath, JSON.stringify(result));
 }
 
 export default {
-    listFilesInQueue,
+    get_queued_files,
     sendFileToOCR,
-    processFilesFromQueue,
-    expressListQueueHandler,
-    expressProcessQueueHandler
+    // processFilesFromQueue,
+    expressListQueueHandler
+    // expressProcessQueueHandler
 };

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020",               // Современный JS: async/await, optional chaining
-    "module": "commonjs",             // Для Node.js (если ESM — см. ниже)
+    "module": "es2020",             // Для Node.js (если ESM — см. ниже)
     "checkJs": true,                  // Включить проверку ошибок в .js
     "baseUrl": "code",                // Базовая директория для импортов
     "paths": {
@@ -10,6 +10,7 @@
     "moduleResolution": "node",       // Разрешение модулей как в Node.js
     "esModuleInterop": true,          // Импорт ES6 модулей в CommonJS
     "allowSyntheticDefaultImports": true,
+    "verbatimModuleSyntax": true,
     "strict": false                    // Строгая проверка (подсвечивает больше проблем)
   },
   "include": ["code/**/*"],

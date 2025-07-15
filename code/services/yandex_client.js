@@ -3,12 +3,17 @@ import {
     serviceClients,
     Session
 } from '@yandex-cloud/nodejs-sdk';
-import { JWK, JWS } from 'node-jose';
+
 import config_service from './config_service.js';
+import node_jose from 'node-jose';
+const { JWK, JWS } = node_jose;
+
+
 
 let IAM_TOKEN = null;
 
 async function get_iam_token() {
+    if (IAM_TOKEN) return IAM_TOKEN;
     // TODO: Добавить проверку на уже существующий токен и его время жизни
     let iam_token = await create_iam();
     IAM_TOKEN = iam_token;
@@ -61,7 +66,7 @@ async function create_iam() {
         const tokenRequest = CreateIamTokenRequest.fromPartial({ jwt })
         const { iamToken } = await tokenClient.create(tokenRequest)
 
-        console.log("Получен IAM токен:" + iamToken)
+        console.log("Получен IAM токен: " + iamToken)
 
         return iamToken
 
