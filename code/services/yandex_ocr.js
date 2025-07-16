@@ -190,6 +190,7 @@ async function backup_result(result) {
     }
     let filename = `ocr_result_${formatDateForFilename(new Date())}.json`;
     let filepath = join(directory, filename);
+    console.log(`Сохраняем результат OCR в ${filepath}`);
     await fs.writeFile(filepath, JSON.stringify(result), { flag: 'w+' });
 }
 
