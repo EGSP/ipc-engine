@@ -11,28 +11,6 @@ const OCR_API_URL = 'https://ocr.api.cloud.yandex.net/ocr/v1/recognizeText';
 const QUEUE_SUB_DIRECTORY = 'data/queue';
 
 /**
- * Получение абсолютного пути до папки очереди из конфига.
- * Если папка не существует — ошибка.
- */
-// function get_queue_directory() {
-//     // Получаем путь из конфига, например: "data/queue"
-//     const relativeQueuePath = QUEUE_SUB_DIRECTORY;
-//     if (!relativeQueuePath) {
-//         throw new Error('Путь к папке очереди не задан в конфиге (ключ paths.queueFolder)');
-//     }
-//     const queue_path = resolve(config_service.get_execution_directory(), relativeQueuePath);
-
-//     // check and create
-//     if (!fsSync.existsSync(queue_path)) {
-//         console.log(`Создаем папку очереди: ${queue_path}`);
-//         fsSync.mkdirSync(queue_path, { recursive: true });
-//     }
-
-//     return queue_path;
-// }
-
-
-/**
  * Асинхронная функция, возвращающая список файлов в очереди на OCR.
  * @returns {Promise<string[]>} Список файлов
  */
@@ -190,17 +168,8 @@ function formatDateForFilename(date) {
     return date.toISOString().replace(/[:.]/g, '-'); // ISO формат без запрещённых символов
 }
 
-// async function backup_result(result){
-//     let directory = get_queue_directory();
-//     let filename = 
-//     let filepath = join(directory, filename);
-//     await fs.writeFile(filepath, JSON.stringify(result));
-// }
-
 export default {
     get_queued_files,
     sendFileToOCR,
-    // processFilesFromQueue,
     expressListQueueHandler
-    // expressProcessQueueHandler
 };

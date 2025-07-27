@@ -56,23 +56,3 @@ export default {
     get_full_path,
     backup_data
 }
-
-
-
-
-// function get_queue_directory() {
-//     // Получаем путь из конфига, например: "data/queue"
-//     const relativeQueuePath = QUEUE_SUB_DIRECTORY;
-//     if (!relativeQueuePath) {
-//         throw new Error('Путь к папке очереди не задан в конфиге (ключ paths.queueFolder)');
-//     }
-//     const queue_path = resolve(config_service.get_execution_directory(), relativeQueuePath);
-
-//     // check and create
-//     if (!fsSync.existsSync(queue_path)) {
-//         console.log(`Создаем папку очереди: ${queue_path}`);
-//         fsSync.mkdirSync(queue_path, { recursive: true });
-//     }
-
-//     return queue_path;
-// }
