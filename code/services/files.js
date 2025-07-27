@@ -15,7 +15,7 @@ import config_service from './config_service.js';
  */
 function get_full_path(ini_paths = true, ...paths) {
     // @ts-ignore
-    const full_path = resolve(config_service.get_execution_directory(), paths);
+    const full_path = join(config_service.get_execution_directory(), ...paths);
 
     // extract only directory without filename
     const full_path_directory = dirname(full_path);
@@ -27,32 +27,76 @@ function get_full_path(ini_paths = true, ...paths) {
     return { full_path, directory: full_path_directory };
 }
 
-/**
- * Writes the given data to a file in the given subdirectory with the given filename and extension.
- * The data can be either an object (in which case it will be JSON-stringified) or a string.
- * If the file already exists, it will be overwritten.
- * @param {string} sub_directory_name - The subdirectory in which to store the file.
- * @param {string} filename_with_extension - The filename (with extension) of the file to write.
- * @param {object|string} data - The data to write to the file.
- * @param {boolean} [stringify=true] - Whether to stringify the data as JSON before writing.
- */
-async function backup_data(sub_directory_name, filename_with_extension, data, stringify = true) {
 
+/**
+ * Asynchronously backs up data to a specified subdirectory and filename.
+ * 
+ * The function creates a full path using the provided subdirectory name
+ * and filename, then writes the data to a file at that path. The data can be
+ * written as a string or JSON, depending on the stringify option.
+ * 
+ * @param {string} sub_directory_name - The name of the subdirectory to store the backup.
+ * @param {string} filename_with_extension - The name of the file including extension.
+ * @param {*} data - The data to back up.
+ * @param {Object} [options] - Options for backup.
+ * @param {string} [options.stringify='string'] - Specifies data format: 'string' or 'json'.
+ * 
+ * @throws {Error} If the stringify option is invalid.
+ */
+
+async function backup_data(sub_directory_name, filename_with_extension, data, { stringify = 'string' } = {}) {
     try {
-        let paths = get_full_path(true, 'backup', sub_directory_name, filename_with_extension);
+        let paths = get_full_path(true, sub_directory_name, 'backup', filename_with_extension);
         let path = paths.full_path;
 
-        if (stringify) {
+        if (stringify === 'string') {
+            await fs.writeFile(path, String(data), { flag: 'w+' });
+        } else if (stringify === 'json') {
             await fs.writeFile(path, JSON.stringify(data), { flag: 'w+' });
         } else {
-            await fs.writeFile(path, data, { flag: 'w+' });
+            throw new Error('Invalid stringify option. Must be either "string" or "json".');
         }
     } catch (err) {
         console.log(err);
     }
 }
 
+function get_filepaths_in_sub_directory(sub_directory_name, {
+    sorting = 'created',
+    order = 'ascend'
+} = {}) {
+    let paths = get_full_path(false, sub_directory_name);
+
+    if (fsSync.existsSync(paths.full_path)) {
+        let files = fsSync.readdirSync(paths.full_path).map(file => {
+            let fullPath = join(paths.full_path, file);
+            let stat = fsSync.statSync(fullPath);
+            return { fullPath, created: stat.birthtime, name: file.toLowerCase() };
+        });
+
+        switch (sorting) {
+            case 'created':
+                files.sort((a, b) => {
+                    let diff = a.created.getTime() - b.created.getTime();
+                    return order === 'descend' ? -diff : diff;
+                });
+                break;
+            case 'name':
+                files.sort((a, b) => {
+                    let diff = a.name.localeCompare(b.name);
+                    return order === 'descend' ? -diff : diff;
+                });
+                break;
+        }
+
+        return files.map(({ fullPath }) => fullPath);
+    } else {
+        return [];
+    }
+}
+
 export default {
     get_full_path,
-    backup_data
+    backup_data,
+    get_filepaths_in_sub_directory
 }

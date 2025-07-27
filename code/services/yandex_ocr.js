@@ -127,12 +127,13 @@ async function sendFileToOCR(fileName) {
         let result_filename = `ocr_result_${formatDateForFilename(new Date())}.json`;
 
         console.log(`OCR API вернул результат: ${JSON.stringify(response.data.result)}`);
-        files.backup_data(QUEUE_SUB_DIRECTORY,result_filename,response.data.result);
+        files.backup_data(QUEUE_SUB_DIRECTORY+'/ocr', result_filename, response.data.result, { stringify: 'json' });
+
         // Возвращаем успешный результат
         return {
             success: true,
             fileName,
-            ocrResult: response.data.result
+            result: response.data.result
         };
 
     } catch (error) {
@@ -165,8 +166,12 @@ async function expressListQueueHandler(req, res) {
 }
 
 function formatDateForFilename(date) {
-    return date.toISOString().replace(/[:.]/g, '-'); // ISO формат без запрещённых символов
+    const timeZone = 'UTC+3';
+    const dateWithTimezone = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() + 3, date.getMinutes(), date.getSeconds()));
+    return dateWithTimezone.toISOString().replace(/[:.]/g, '-').replace('Z', `+${timeZone}`); // ISO формат без запрещённых символов
 }
+
+
 
 export default {
     get_queued_files,
