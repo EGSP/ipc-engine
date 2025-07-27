@@ -4,31 +4,32 @@ import { resolve, dirname, join, extname } from 'path';
 import config_service from './config_service.js';
 import yandex_client from './yandex_client.js';
 import axios from 'axios';
+import files from './files.js';
 
 const OCR_API_URL = 'https://ocr.api.cloud.yandex.net/ocr/v1/recognizeText';
+
+const QUEUE_SUB_DIRECTORY = 'data/queue';
 
 /**
  * Получение абсолютного пути до папки очереди из конфига.
  * Если папка не существует — ошибка.
  */
-function get_queue_directory() {
+// function get_queue_directory() {
+//     // Получаем путь из конфига, например: "data/queue"
+//     const relativeQueuePath = QUEUE_SUB_DIRECTORY;
+//     if (!relativeQueuePath) {
+//         throw new Error('Путь к папке очереди не задан в конфиге (ключ paths.queueFolder)');
+//     }
+//     const queue_path = resolve(config_service.get_execution_directory(), relativeQueuePath);
 
-    let config = config_service.get_config();
-    // Получаем путь из конфига, например: "data/queue"
-    const relativeQueuePath = config.paths.queue;
-    if (!relativeQueuePath) {
-        throw new Error('Путь к папке очереди не задан в конфиге (ключ paths.queueFolder)');
-    }
-    const queue_path = resolve(config_service.get_execution_directory(), relativeQueuePath);
+//     // check and create
+//     if (!fsSync.existsSync(queue_path)) {
+//         console.log(`Создаем папку очереди: ${queue_path}`);
+//         fsSync.mkdirSync(queue_path, { recursive: true });
+//     }
 
-    // check and create
-    if (!fsSync.existsSync(queue_path)) {
-        console.log(`Создаем папку очереди: ${queue_path}`);
-        fsSync.mkdirSync(queue_path, { recursive: true });
-    }
-
-    return queue_path;
-}
+//     return queue_path;
+// }
 
 
 /**
@@ -37,7 +38,7 @@ function get_queue_directory() {
  */
 async function get_queued_files() {
     console.log(`Получаем список файлов в очереди...`);
-    const queueDir = get_queue_directory();
+    const queueDir = files.get_full_path(true, QUEUE_SUB_DIRECTORY).full_path;
 
     try {
         const files = await fs.readdir(queueDir);
@@ -81,7 +82,7 @@ function get_mime_type(filename) {
  * @returns {Promise<Object>} { success, fileName, ocrResult?, errorMessage? }
  */
 async function sendFileToOCR(fileName) {
-    const queueDir = get_queue_directory();
+    const queueDir = files.get_full_path(true, QUEUE_SUB_DIRECTORY).full_path;
     const filePath = join(queueDir, fileName);
 
     try {
@@ -132,7 +133,7 @@ async function sendFileToOCR(fileName) {
         }
 
         console.log(`OCR API вернул результат: ${JSON.stringify(response.data)}`);
-        backup_result(JSON.stringify(response.data));
+        files.backup_data(QUEUE_SUB_DIRECTORY,`ocr_result_${Date.now().toLocaleString()}.json`,response.data);
         // Возвращаем успешный результат
         return {
             success: true,
@@ -168,12 +169,12 @@ async function expressListQueueHandler(req, res) {
     }
 }
 
-async function backup_result(result){
-    let directory = get_queue_directory();
-    let filename = `ocr_result_${Date.now().toLocaleString()}.json`;
-    let filepath = join(directory, filename);
-    await fs.writeFile(filepath, JSON.stringify(result));
-}
+// async function backup_result(result){
+//     let directory = get_queue_directory();
+//     let filename = 
+//     let filepath = join(directory, filename);
+//     await fs.writeFile(filepath, JSON.stringify(result));
+// }
 
 export default {
     get_queued_files,
