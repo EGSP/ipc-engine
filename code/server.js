@@ -9,19 +9,6 @@ let config = config_service.get_config();
 // Инициализация логгера с уровнем из конфига
 const logLevel = config.logging || 'info';
 
-const logger = createLogger({
-    level: logLevel,
-    format: _format.combine(
-        _format.timestamp(),
-        _format.printf(({ timestamp, level, message }) => {
-            return `${timestamp} [${level.toUpperCase()}] ${message}`;
-        })
-    ),
-    transports: [
-        new _transports.File({ filename: 'logs/app.log' }),
-        new _transports.Console()
-    ]
-});
 
 async function ini_express() {
     // Запуск Express
@@ -37,11 +24,11 @@ async function ini_express() {
 
     // Запуск сервера
     app.listen(port, () => {
-        logger.info(`Сервис ipc-engine запущен на порту ${port}`);
+        console.log(`Сервис ipc-engine запущен на порту ${port}`);
     });
 }
 
-async function ini(){
+async function ini() {
     await yandex_ocr.get_queued_files().then(async (files) => {
         console.log(`Приложение запущено. В очереди на OCR ${files.length} файлов.`);
         let file = files[0];
@@ -52,7 +39,12 @@ async function ini(){
 }
 
 console.log(`Запускаем приложение...`);
-ini();
+try {
+    ini();
+} catch (error) {
+    console.error(`Ошибка запуска приложения: ${error.message}`);
+    process.exit(1);
+}
 
 
 

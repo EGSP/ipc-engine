@@ -39,13 +39,13 @@ function get_full_path(ini_paths = true, ...paths) {
 async function backup_data(sub_directory_name, filename_with_extension, data, stringify = true) {
 
     try {
-        let paths = get_full_path(true, sub_directory_name, filename_with_extension);
+        let paths = get_full_path(true, 'backup', sub_directory_name, filename_with_extension);
         let path = paths.full_path;
 
         if (stringify) {
-            await fs.writeFile(path, JSON.stringify(data));
+            await fs.writeFile(path, JSON.stringify(data), { flag: 'w+' });
         } else {
-            await fs.writeFile(path, data);
+            await fs.writeFile(path, data, { flag: 'w+' });
         }
     } catch (err) {
         console.log(err);

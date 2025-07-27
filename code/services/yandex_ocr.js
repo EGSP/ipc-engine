@@ -67,7 +67,7 @@ async function get_queued_files() {
 function get_mime_type(filename) {
     const ext = extname(filename).toLowerCase();
     switch (ext) {
-        case '.pdf': return 'PDF';
+        case '.pdf': return 'application/pdf';
         case '.png': return 'PNG';
         case '.jpg':
         case '.jpeg': return 'JPEG';
@@ -83,6 +83,11 @@ function get_mime_type(filename) {
  */
 async function sendFileToOCR(fileName) {
     const queueDir = files.get_full_path(true, QUEUE_SUB_DIRECTORY).full_path;
+    if (!fileName) {
+        console.log('sendFileToOCR: файл не указан');
+        return;
+    }
+
     const filePath = join(queueDir, fileName);
 
     try {
@@ -117,31 +122,43 @@ async function sendFileToOCR(fileName) {
             'Authorization': `Bearer ${iamToken}`,
             'x-folder-id': folderId,
             'x-data-logging-enabled': true
-        }      
+        }
 
         console.log(`Отправляем файл "${fileName}" на Yandex OCR...`);
         // Выполняем POST-запрос к Yandex OCR API
-        let response = await axios.post(OCR_API_URL, JSON.stringify(data),
-         { headers: headers, timeout: 10000 });
+        let response = await axios.post(OCR_API_URL, data,
+            { headers: headers, timeout: 120000 }).catch((error) => {
+                //console.error(error);
+                console.error(error?.response?.data?.error)
+                console.error(`Ошибка отправки файла "${fileName}" на Yandex OCR: ${error.message}`);
+            });
 
+        if (!response) {
+            return;
+        }
         if (response.status !== 200) {
-            throw new Error(`OCR API вернул статус ${response.status}`);
+            console.error(`OCR API вернул ошибку: ${response.status}`);
+            return
         }
 
-        if (!response.data?.results?.length) {
-            throw new Error('OCR API вернул пустой результат');
+        if (!response.data?.result) {
+            console.error(`OCR API вернул пустой результат`);
+            return
         }
 
-        console.log(`OCR API вернул результат: ${JSON.stringify(response.data)}`);
-        files.backup_data(QUEUE_SUB_DIRECTORY,`ocr_result_${Date.now().toLocaleString()}.json`,response.data);
+        let result_filename = `ocr_result_${formatDateForFilename(new Date())}.json`;
+
+        console.log(`OCR API вернул результат: ${JSON.stringify(response.data.result)}`);
+        files.backup_data(QUEUE_SUB_DIRECTORY,result_filename,response.data.result);
         // Возвращаем успешный результат
         return {
             success: true,
             fileName,
-            ocrResult: response.data.results[0]
+            ocrResult: response.data.result
         };
 
     } catch (error) {
+        console.error(`Ошибка OCR для файла "${fileName}": ${error.message}`);
         return {
             success: false,
             fileName,
@@ -167,6 +184,10 @@ async function expressListQueueHandler(req, res) {
             errorMessage: `Ошибка получения списка файлов в очереди OCR: ${error.message}`
         });
     }
+}
+
+function formatDateForFilename(date) {
+    return date.toISOString().replace(/[:.]/g, '-'); // ISO формат без запрещённых символов
 }
 
 // async function backup_result(result){
