@@ -5,6 +5,7 @@ import config_service from './config_service.js';
 import yandex_client from './yandex_client.js';
 import axios from 'axios';
 import files from './files.js';
+import time from './time.js';
 
 const OCR_API_URL = 'https://ocr.api.cloud.yandex.net/ocr/v1/recognizeText';
 
@@ -124,7 +125,7 @@ async function sendFileToOCR(fileName) {
             return
         }
 
-        let result_filename = `ocr_result_${formatDateForFilename(new Date())}.json`;
+        let result_filename = `ocr_result_${time.get_current_timestamp()}.json`;
 
         console.log(`OCR API вернул результат: ${JSON.stringify(response.data.result)}`);
         files.backup_data(QUEUE_SUB_DIRECTORY+'/ocr', result_filename, response.data.result, { stringify: 'json' });
@@ -164,13 +165,6 @@ async function expressListQueueHandler(req, res) {
         });
     }
 }
-
-function formatDateForFilename(date) {
-    const timeZone = 'UTC+3';
-    const dateWithTimezone = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() + 3, date.getMinutes(), date.getSeconds()));
-    return dateWithTimezone.toISOString().replace(/[:.]/g, '-').replace('Z', `+${timeZone}`); // ISO формат без запрещённых символов
-}
-
 
 
 export default {
