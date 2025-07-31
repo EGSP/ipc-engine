@@ -87,6 +87,28 @@ async function create_iam() {
     }
 }
 
+async function create_rest_header() {
+    const iamToken = await get_iam_token();
+
+    let yandex_config = config_service.get_yandex_config();
+    const folderId = yandex_config.cloud.catalog_id;
+
+    if (!iamToken) {
+        throw new Error('IAM токен отсутствует: проверьте конфигурацию');
+    }
+    if (!folderId) {
+        throw new Error('ID каталога отсутствует: проверьте конфигурацию');
+    }
+
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${iamToken}`,
+        'x-folder-id': folderId,
+        'x-data-logging-enabled': true
+    };
+}
+
 export default {
-    get_iam_token
+    get_iam_token,
+    create_rest_header
 };

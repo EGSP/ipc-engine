@@ -72,19 +72,7 @@ async function sendFileToOCR(fileName) {
     try {
         // Проверяем доступность файла
         await fs.access(filePath);
-
-        let yandex_config = config_service.get_yandex_config();
-        // Загружаем параметры для Yandex OCR из конфига
-        const iamToken = await yandex_client.get_iam_token();
-        const folderId = yandex_config.cloud.catalog_id;
-
-        if (!iamToken) {
-            throw new Error('IAM токен отсутствует: проверьте конфигурацию');
-        }
-        if (!folderId) {
-            throw new Error('ID каталога отсутствует: проверьте конфигурацию');
-        }
-
+        
         // Читаем файл и конвертируем в base64
         const fileBuffer = await fs.readFile(filePath);
         const fileBase64 = fileBuffer.toString('base64');
@@ -96,17 +84,12 @@ async function sendFileToOCR(fileName) {
             model: "page"
         };
 
-        let headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${iamToken}`,
-            'x-folder-id': folderId,
-            'x-data-logging-enabled': true
-        }
+        let header = await yandex_client.create_rest_header();
 
         console.log(`Отправляем файл "${fileName}" на Yandex OCR...`);
         // Выполняем POST-запрос к Yandex OCR API
         let response = await axios.post(OCR_API_URL, data,
-            { headers: headers, timeout: 120000 }).catch((error) => {
+            { headers: header, timeout: 120000 }).catch((error) => {
                 //console.error(error);
                 console.error(error?.response?.data?.error)
                 console.error(`Ошибка отправки файла "${fileName}" на Yandex OCR: ${error.message}`);
